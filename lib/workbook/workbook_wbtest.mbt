@@ -94,3 +94,87 @@ test "formula text is preserved" {
   assert_true(sheet.set_formula("B2", "=1+2"))
   assert_eq(sheet.get_formula("B2"), Some("=1+2"))
 }
+
+///|
+test "cross-sheet references read other sheets" {
+  let workbook = Workbook::new()
+  let budget = workbook.add_sheet("Budget")
+  ignore(budget.set_value("D2", @types.Value::Number(100.0)))
+  ignore(budget.set_value("D3", @types.Value::Number(250.0)))
+  ignore(budget.set_formula("D8", "=SUM(D2:D3)"))
+  let summary = workbook.add_sheet("Summary")
+  ignore(summary.set_formula("B1", "=Budget!D8*2"))
+  ignore(summary.set_formula("B2", "=SUM(Budget!D2:D3)"))
+  ignore(workbook.recalculate_all())
+  assert_eq(budget.get_value("D8"), @types.Value::Number(350.0))
+  assert_eq(summary.get_value("B1"), @types.Value::Number(700.0))
+  assert_eq(summary.get_value("B2"), @types.Value::Number(350.0))
+  let deps = summary.dependencies("B1")
+  assert_eq(deps.length(), 1)
+  assert_eq(deps[0], "Budget!D8")
+}
+
+///|
+test "cross-sheet edits propagate downstream" {
+  let workbook = Workbook::new()
+  let budget = workbook.add_sheet("Budget")
+  ignore(budget.set_value("A1", @types.Value::Number(10.0)))
+  let summary = workbook.add_sheet("Summary")
+  ignore(summary.set_formula("A1", "=Budget!A1+1"))
+  ignore(workbook.recalculate_all())
+  assert_eq(summary.get_value("A1"), @types.Value::Number(11.0))
+  ignore(budget.set_value("A1", @types.Value::Number(40.0)))
+  ignore(workbook.recalculate_all())
+  assert_eq(summary.get_value("A1"), @types.Value::Number(41.0))
+}
+
+///|
+test "sheet names are case insensitive" {
+  let workbook = Workbook::new()
+  let data = workbook.add_sheet("Data")
+  ignore(data.set_value("A1", @types.Value::Number(5.0)))
+  let report = workbook.add_sheet("Report")
+  ignore(report.set_formula("A1", "=data!A1*3"))
+  ignore(workbook.recalculate_all())
+  assert_eq(report.get_value("A1"), @types.Value::Number(15.0))
+}
+
+///|
+test "missing sheet becomes ref error" {
+  let workbook = Workbook::new()
+  let sheet = workbook.add_sheet("Sheet1")
+  ignore(sheet.set_formula("A1", "=Ghost!A1"))
+  ignore(sheet.set_formula("A2", "=SUM(Ghost!A1:A2)"))
+  ignore(workbook.recalculate_all())
+  assert_eq(sheet.get_value("A1"), @types.Value::Error(@types.CellError::Ref))
+  assert_eq(sheet.get_value("A2"), @types.Value::Error(@types.CellError::Ref))
+}
+
+///|
+test "cross-sheet cycles become circ errors" {
+  let workbook = Workbook::new()
+  let first = workbook.add_sheet("First")
+  let second = workbook.add_sheet("Second")
+  ignore(first.set_formula("A1", "=Second!A1+1"))
+  ignore(second.set_formula("A1", "=First!A1+1"))
+  ignore(workbook.recalculate_all())
+  assert_eq(
+    first.get_value("A1"),
+    @types.Value::Error(@types.CellError::Circular),
+  )
+  assert_eq(
+    second.get_value("A1"),
+    @types.Value::Error(@types.CellError::Circular),
+  )
+}
+
+///|
+test "sheet order is preserved for tabs" {
+  let workbook = Workbook::new()
+  ignore(workbook.add_sheet("Budget"))
+  ignore(workbook.add_sheet("Summary"))
+  let names = workbook.names()
+  assert_eq(names.length(), 2)
+  assert_eq(names[0], "Budget")
+  assert_eq(names[1], "Summary")
+}

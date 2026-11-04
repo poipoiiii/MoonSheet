@@ -17,6 +17,7 @@ enum Token {
   RParen
   Comma
   Colon
+  Bang
   Eq
   Ne
   Lt
@@ -186,6 +187,10 @@ fn lex(input : String) -> Result[Array[Token], ParseError] {
         }
         ':' => {
           tokens.push(Token::Colon)
+          i = i + 1
+        }
+        '!' => {
+          tokens.push(Token::Bang)
           i = i + 1
         }
         '=' => {
@@ -416,6 +421,38 @@ fn Parser::parse_primary(self : Parser) -> Result[Expr, ParseError] {
           }
         }
         Ok(Expr::Call(upper_string(name), args))
+      } else if self.eat(Token::Bang) {
+        match self.peek() {
+          Token::Ident(cell) => {
+            self.pos = self.pos + 1
+            match @types.Address::parse(cell) {
+              Some(start) =>
+                if self.eat(Token::Colon) {
+                  match self.peek() {
+                    Token::Ident(last) => {
+                      self.pos = self.pos + 1
+                      match @types.Address::parse(last) {
+                        Some(end_addr) =>
+                          Ok(
+                            Expr::SheetRange(
+                              name,
+                              @types.Range::new(start, end_addr),
+                            ),
+                          )
+                        None =>
+                          Err(ParseError::new("invalid range end", self.pos))
+                      }
+                    }
+                    _ => Err(ParseError::new("expected range end", self.pos))
+                  }
+                } else {
+                  Ok(Expr::SheetRef(name, start))
+                }
+              None => Err(ParseError::new("invalid cell reference", self.pos))
+            }
+          }
+          _ => Err(ParseError::new("expected cell after '!'", self.pos))
+        }
       } else if self.eat(Token::Colon) {
         match self.peek() {
           Token::Ident(end_name) => {

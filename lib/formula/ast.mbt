@@ -42,6 +42,8 @@ pub(all) enum Expr {
   Error(@types.CellError)
   Ref(@types.Address)
   Range(@types.Range)
+  SheetRef(String, @types.Address)
+  SheetRange(String, @types.Range)
   Unary(UnaryOp, Expr)
   Binary(BinaryOp, Expr, Expr)
   Call(String, Array[Expr])

@@ -24,21 +24,26 @@ pub struct Sheet {
   mut dirty : Map[Int32, Bool]
   mut graph_valid : Bool
   mut full_recalc : Bool
+  mut pending : Bool
   names : Map[String, @types.Range]
 }
 pub fn Sheet::define_name(Self, String, String) -> Bool
 pub fn Sheet::dependencies(Self, String) -> Array[String]
+pub fn Sheet::depends_on_sheets(Self) -> Array[String]
 pub fn Sheet::display_value(Self, String) -> String
 pub fn Sheet::entries(Self) -> Array[(String, String?, @types.Value)]
 pub fn Sheet::get_format(Self, String) -> @types.CellFormat
 pub fn Sheet::get_formula(Self, String) -> String?
 pub fn Sheet::get_value(Self, String) -> @types.Value
+pub fn Sheet::mark_circular(Self) -> Int32
+pub fn Sheet::mark_stale(Self) -> Unit
 pub fn Sheet::name_list(Self) -> Array[String]
 pub fn Sheet::named_range(Self, String) -> @types.Range?
 pub fn Sheet::new(String) -> Self
 pub fn Sheet::recalculate(Self) -> Int32
 pub fn Sheet::recalculate_dirty(Self) -> Int32
 pub fn Sheet::recalculate_full(Self) -> Int32
+pub fn Sheet::recalculate_with(Self, Map[String, Map[Int32, @types.Value]]) -> Int32
 pub fn Sheet::remove_name(Self, String) -> Bool
 pub fn Sheet::set_format(Self, String, @types.CellFormat) -> Bool
 pub fn Sheet::set_formula(Self, String, String) -> Bool
@@ -47,9 +52,11 @@ pub fn Sheet::value_at(Self, @types.Address) -> @types.Value
 
 pub struct Workbook {
   sheets : Map[String, Sheet]
+  order : Array[String]
 }
 pub fn Workbook::add_sheet(Self, String) -> Sheet
 pub fn Workbook::define_name(Self, String, String, String) -> Bool
+pub fn Workbook::has_sheet(Self, String) -> Bool
 pub fn Workbook::names(Self) -> Array[String]
 pub fn Workbook::new() -> Self
 pub fn Workbook::recalculate_all(Self) -> Int32

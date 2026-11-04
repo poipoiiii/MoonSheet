@@ -13,6 +13,8 @@ pub fn parse_formula(String) -> Result[Expr, ParseError]
 
 pub fn references(Expr) -> Array[@types.Address]
 
+pub fn references_across(Expr, (String) -> @types.Range?) -> Array[(String?, @types.Address)]
+
 pub fn references_with(Expr, (String) -> @types.Range?) -> Array[@types.Address]
 
 // Errors
@@ -43,6 +45,8 @@ pub(all) enum Expr {
   Error(@types.CellError)
   Ref(@types.Address)
   Range(@types.Range)
+  SheetRef(String, @types.Address)
+  SheetRange(String, @types.Range)
   Unary(UnaryOp, Expr)
   Binary(BinaryOp, Expr, Expr)
   Call(String, Array[Expr])

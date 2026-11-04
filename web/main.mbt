@@ -5,7 +5,8 @@
 
 ///|
 struct App {
-  mut sheet : @workbook.Sheet
+  mut workbook : @workbook.Workbook
+  mut active : String
   mut selected_row : Int32
   mut selected_col : Int32
   mut recalc_count : Int32
@@ -14,9 +15,9 @@ struct App {
 }
 
 ///|
-fn make_sample_sheet() -> @workbook.Sheet {
+fn make_sample_workbook() -> @workbook.Workbook {
   let workbook = @workbook.Workbook::new()
-  let sheet = workbook.add_sheet("Sheet1")
+  let sheet = workbook.add_sheet("Budget")
   ignore(sheet.set_value("A1", @types.Value::Text("Item")))
   ignore(sheet.set_value("B1", @types.Value::Text("Qty")))
   ignore(sheet.set_value("C1", @types.Value::Text("Unit price")))
@@ -62,14 +63,33 @@ fn make_sample_sheet() -> @workbook.Sheet {
   ignore(sheet.set_format("D6", @types.CellFormat::Currency("¥", 2)))
   ignore(sheet.set_format("D7", @types.CellFormat::Currency("¥", 2)))
   ignore(sheet.set_format("D8", @types.CellFormat::Currency("¥", 2)))
-  ignore(sheet.recalculate())
-  sheet
+
+  let summary = workbook.add_sheet("Summary")
+  ignore(summary.set_value("A1", @types.Value::Text("Metric")))
+  ignore(summary.set_value("B1", @types.Value::Text("Value")))
+  ignore(summary.set_value("A2", @types.Value::Text("Line items")))
+  ignore(summary.set_formula("B2", "=COUNT(Budget!D2:D4)"))
+  ignore(summary.set_value("A3", @types.Value::Text("Subtotal")))
+  ignore(summary.set_formula("B3", "=Budget!D6"))
+  ignore(summary.set_value("A4", @types.Value::Text("Tax")))
+  ignore(summary.set_formula("B4", "=Budget!D7"))
+  ignore(summary.set_value("A5", @types.Value::Text("Grand total")))
+  ignore(summary.set_formula("B5", "=Budget!D8"))
+  ignore(summary.set_format("B3", @types.CellFormat::Currency("¥", 2)))
+  ignore(summary.set_format("B4", @types.CellFormat::Currency("¥", 2)))
+  ignore(summary.set_format("B5", @types.CellFormat::Currency("¥", 2)))
+  ignore(summary.set_value("A7", @types.Value::Text("Share of tax")))
+  ignore(summary.set_formula("B7", "=IFERROR(Budget!D7/Budget!D8*100,0)"))
+  ignore(summary.set_format("B7", @types.CellFormat::Percent(1)))
+  ignore(workbook.recalculate_all())
+  workbook
 }
 
 ///|
 fn make_app() -> App {
   {
-    sheet: make_sample_sheet(),
+    workbook: make_sample_workbook(),
+    active: "Budget",
     selected_row: 0,
     selected_col: 0,
     recalc_count: 1,
@@ -108,9 +128,18 @@ fn kind_of(value : @types.Value) -> String {
 }
 
 ///|
+fn App::sheet(self : App) -> @workbook.Sheet {
+  match self.workbook.sheet(self.active) {
+    Some(sheet) => sheet
+    None => self.workbook.add_sheet(self.active)
+  }
+}
+
+///|
 fn App::render(self : App) -> Unit {
+  let sheet = self.sheet()
   let selected = @types.Address::new(self.selected_row, self.selected_col).to_a1()
-  let dependencies = self.sheet.dependencies(selected)
+  let dependencies = sheet.dependencies(selected)
   let dep_map : Map[String, Bool] = Map([], capacity=8)
   for dep in dependencies {
     dep_map[dep] = true
@@ -120,12 +149,12 @@ fn App::render(self : App) -> Unit {
     let mut col = 0
     while col < self.cols {
       let a1 = @types.Address::new(row, col).to_a1()
-      let value = self.sheet.get_value(a1)
-      let formula = match self.sheet.get_formula(a1) {
+      let value = sheet.get_value(a1)
+      let formula = match sheet.get_formula(a1) {
         Some(text) => text
         None => ""
       }
-      let text = self.sheet.display_value(a1)
+      let text = sheet.display_value(a1)
       let dependency = dep_map.get(a1) is Some(_)
       let is_selected = row == self.selected_row && col == self.selected_col
       js_render_cell(
@@ -141,8 +170,10 @@ fn App::render(self : App) -> Unit {
     }
     row = row + 1
   }
-  let selected_value = self.sheet.get_value(selected)
-  let selected_formula = match self.sheet.get_formula(selected) {
+  let sheet_names = self.workbook.names()
+  js_render_tabs(join(sheet_names, "\n"), self.active)
+  let selected_value = sheet.get_value(selected)
+  let selected_formula = match sheet.get_formula(selected) {
     Some(text) => text
     None => ""
   }
@@ -152,14 +183,16 @@ fn App::render(self : App) -> Unit {
     selected_value.to_display()
   }
   js_set_formula(bar)
-  js_set_selected_label(selected)
+  js_set_selected_label(self.active + "!" + selected)
   js_set_dependencies(join(dependencies, ", "))
-  js_set_cell_details(self.sheet.display_value(selected), selected_formula)
-  js_set_format(self.sheet.get_format(selected).code())
-  js_set_status("Ready · click a cell, edit the formula bar, press Enter")
+  js_set_cell_details(sheet.display_value(selected), selected_formula)
+  js_set_format(sheet.get_format(selected).code())
+  js_set_status(
+    "Ready · \{self.active} · \{sheet_names.length()} worksheet(s)",
+  )
   js_set_engine_state("ready")
   js_set_recalc_count(self.recalc_count)
-  let entries = self.sheet.entries()
+  let entries = sheet.entries()
   let mut formula_count = 0
   for entry in entries {
     if entry.1 is Some(_) {
@@ -181,25 +214,51 @@ fn App::select(self : App, row : Int32, col : Int32) -> Unit {
 }
 
 ///|
+fn App::switch_sheet(self : App, name : String) -> Unit {
+  if self.workbook.has_sheet(name) {
+    self.active = name
+    self.render()
+    js_toast("Switched to \{name}")
+  }
+}
+
+///|
+fn App::add_sheet(self : App) -> Unit {
+  let mut index = self.workbook.names().length() + 1
+  let mut name = "Sheet\{index}"
+  while self.workbook.has_sheet(name) {
+    index = index + 1
+    name = "Sheet\{index}"
+  }
+  ignore(self.workbook.add_sheet(name))
+  self.active = name
+  self.selected_row = 0
+  self.selected_col = 0
+  self.render()
+  js_toast("Added worksheet \{name}")
+}
+
+///|
 fn App::set_format(self : App, code : String) -> Unit {
   let a1 = @types.Address::new(self.selected_row, self.selected_col).to_a1()
-  ignore(self.sheet.set_format(a1, @types.CellFormat::parse(code)))
+  ignore(self.sheet().set_format(a1, @types.CellFormat::parse(code)))
   self.render()
   js_toast("Format updated")
 }
 
 ///|
 fn App::commit(self : App, text : String) -> Unit {
+  let sheet = self.sheet()
   let a1 = @types.Address::new(self.selected_row, self.selected_col).to_a1()
   let trimmed = text.trim().to_owned()
   if trimmed.length() == 0 {
-    ignore(self.sheet.set_value(a1, @types.Value::Blank))
+    ignore(sheet.set_value(a1, @types.Value::Blank))
   } else if trimmed.get_char(0) == Some('=') {
-    ignore(self.sheet.set_formula(a1, trimmed))
+    ignore(sheet.set_formula(a1, trimmed))
   } else {
-    ignore(self.sheet.set_value(a1, @io.parse_cell_value(trimmed)))
+    ignore(sheet.set_value(a1, @io.parse_cell_value(trimmed)))
   }
-  let changed = self.sheet.recalculate()
+  let changed = self.workbook.recalculate_all()
   self.recalc_count = self.recalc_count + 1
   self.render()
   js_toast("Recalculated \{changed} formula cell(s)")
@@ -210,29 +269,31 @@ fn App::load_csv(self : App, text : String) -> Unit {
   let workbook = @workbook.Workbook::new()
   let sheet = workbook.add_sheet("Sheet1")
   ignore(@io.load_csv(sheet, text))
-  ignore(sheet.recalculate())
-  self.sheet = sheet
+  ignore(workbook.recalculate_all())
+  self.workbook = workbook
+  self.active = "Sheet1"
   self.selected_row = 0
   self.selected_col = 0
   self.recalc_count = self.recalc_count + 1
   self.render()
-  js_toast("CSV loaded")
+  js_toast("CSV loaded into Sheet1")
 }
 
 ///|
 fn App::reset(self : App) -> Unit {
-  self.sheet = make_sample_sheet()
+  self.workbook = make_sample_workbook()
+  self.active = "Budget"
   self.selected_row = 0
   self.selected_col = 0
   self.recalc_count = self.recalc_count + 1
   self.render()
-  js_toast("Sample sheet restored")
+  js_toast("Sample workbook restored")
 }
 
 ///|
 fn App::export_csv(self : App) -> Unit {
-  js_download_csv(@io.export_csv_auto(self.sheet))
-  js_toast("CSV exported")
+  js_download_csv(@io.export_csv_auto(self.sheet()))
+  js_toast("Exported \{self.active}.csv")
 }
 
 ///|
@@ -242,6 +303,9 @@ fn main {
   js_set_on_commit(fn(text) { app.commit(text) })
   js_set_on_csv(fn(text) { app.load_csv(text) })
   js_set_on_format(fn(code) { app.set_format(code) })
-  js_bind_actions(fn() { app.reset() }, fn() { app.export_csv() })
+  js_set_on_sheet_select(fn(name) { app.switch_sheet(name) })
+  js_bind_actions(fn() { app.reset() }, fn() { app.export_csv() }, fn() {
+    app.add_sheet()
+  })
   app.render()
 }

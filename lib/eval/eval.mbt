@@ -10,6 +10,8 @@ pub struct EvalContext {
   get_value : (@types.Address) -> @types.Value
   get_range : (@types.Range) -> Array[@types.Value]
   get_named_range : (String) -> @types.Range?
+  get_sheet_value : (String, @types.Address) -> @types.Value
+  get_sheet_range : (String, @types.Range) -> Array[@types.Value]
 }
 
 ///|
@@ -17,7 +19,15 @@ pub fn EvalContext::new(
   get_value : (@types.Address) -> @types.Value,
   get_range : (@types.Range) -> Array[@types.Value],
 ) -> EvalContext {
-  { get_value, get_range, get_named_range: fn(_name) { None }, }
+  {
+    get_value,
+    get_range,
+    get_named_range: fn(_name) { None },
+    get_sheet_value: fn(_sheet, _addr) {
+      @types.Value::Error(@types.CellError::Ref)
+    },
+    get_sheet_range: fn(_sheet, _range) { [] },
+  }
 }
 
 ///|
@@ -26,7 +36,27 @@ pub fn EvalContext::with_names(
   get_range : (@types.Range) -> Array[@types.Value],
   get_named_range : (String) -> @types.Range?,
 ) -> EvalContext {
-  { get_value, get_range, get_named_range, }
+  {
+    get_value,
+    get_range,
+    get_named_range,
+    get_sheet_value: fn(_sheet, _addr) {
+      @types.Value::Error(@types.CellError::Ref)
+    },
+    get_sheet_range: fn(_sheet, _range) { [] },
+  }
+}
+
+///|
+/// Context for a workbook: adds cross-sheet lookups on top of named ranges.
+pub fn EvalContext::with_sheets(
+  get_value : (@types.Address) -> @types.Value,
+  get_range : (@types.Range) -> Array[@types.Value],
+  get_named_range : (String) -> @types.Range?,
+  get_sheet_value : (String, @types.Address) -> @types.Value,
+  get_sheet_range : (String, @types.Range) -> Array[@types.Value],
+) -> EvalContext {
+  { get_value, get_range, get_named_range, get_sheet_value, get_sheet_range, }
 }
 
 ///|
@@ -56,7 +86,10 @@ pub fn eval(expr : @formula.Expr, ctx : EvalContext) -> @types.Value {
     @formula.Expr::Boolean(b) => @types.Value::Boolean(b)
     @formula.Expr::Error(e) => @types.Value::Error(e)
     @formula.Expr::Ref(addr) => (ctx.get_value)(addr)
+    @formula.Expr::SheetRef(sheet, addr) => (ctx.get_sheet_value)(sheet, addr)
     @formula.Expr::Range(_) => @types.Value::Error(@types.CellError::ValueErr)
+    @formula.Expr::SheetRange(_, _) =>
+      @types.Value::Error(@types.CellError::ValueErr)
     @formula.Expr::Name(name) =>
       match (ctx.get_named_range)(upper_string(name)) {
         Some(range) =>
@@ -183,6 +216,12 @@ fn eval_call(
       match arg {
         @formula.Expr::Range(range) => {
           let items = (ctx.get_range)(range)
+          for item in items {
+            values.push(item)
+          }
+        }
+        @formula.Expr::SheetRange(sheet, range) => {
+          let items = (ctx.get_sheet_range)(sheet, range)
           for item in items {
             values.push(item)
           }
@@ -364,6 +403,14 @@ fn range_arg(
 ) -> (Array[@types.Value], Int32, Int32)? {
   match arg {
     @formula.Expr::Range(range) => Some(range_arg_from(range, ctx))
+    @formula.Expr::SheetRange(sheet, range) =>
+      Some(
+        (
+          (ctx.get_sheet_range)(sheet, range),
+          range.end.row - range.start.row + 1,
+          range.end.col - range.start.col + 1,
+        ),
+      )
     @formula.Expr::Name(name) =>
       match (ctx.get_named_range)(upper_string(name)) {
         Some(range) => Some(range_arg_from(range, ctx))

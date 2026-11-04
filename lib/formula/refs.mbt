@@ -63,3 +63,65 @@ fn collect_references(
     _ => ()
   }
 }
+
+///|
+/// Collect references together with their sheet qualifier. `None` means the
+/// formula's own sheet, `Some(Sheet2)` is a cross-sheet reference.
+pub fn references_across(
+  expr : Expr,
+  resolve_name : (String) -> @types.Range?,
+) -> Array[(String?, @types.Address)] {
+  let out : Array[(String?, @types.Address)] = []
+  collect_references_across(expr, out, resolve_name)
+  out
+}
+
+///|
+fn expand_range_across(
+  sheet : String?,
+  range : @types.Range,
+  out : Array[(String?, @types.Address)],
+) -> Unit {
+  let rows = range.end.row - range.start.row + 1
+  let cols = range.end.col - range.start.col + 1
+  if rows * cols <= 10000 {
+    let mut row = range.start.row
+    while row <= range.end.row {
+      let mut col = range.start.col
+      while col <= range.end.col {
+        out.push((sheet, @types.Address::new(row, col)))
+        col = col + 1
+      }
+      row = row + 1
+    }
+  }
+}
+
+///|
+fn collect_references_across(
+  expr : Expr,
+  out : Array[(String?, @types.Address)],
+  resolve_name : (String) -> @types.Range?,
+) -> Unit {
+  match expr {
+    Ref(addr) => out.push((None, addr))
+    Range(range) => expand_range_across(None, range, out)
+    SheetRef(sheet, addr) => out.push((Some(sheet), addr))
+    SheetRange(sheet, range) => expand_range_across(Some(sheet), range, out)
+    Name(name) =>
+      match resolve_name(name) {
+        Some(range) => expand_range_across(None, range, out)
+        None => ()
+      }
+    Unary(_, inner) => collect_references_across(inner, out, resolve_name)
+    Binary(_, left, right) => {
+      collect_references_across(left, out, resolve_name)
+      collect_references_across(right, out, resolve_name)
+    }
+    Call(_, args) =>
+      for arg in args {
+        collect_references_across(arg, out, resolve_name)
+      }
+    _ => ()
+  }
+}

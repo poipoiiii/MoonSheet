@@ -6,18 +6,19 @@ MoonSheet is not an Excel clone. It is the reusable calculation core that report
 
 ## What works
 
-- **Formula language** — numbers, strings, booleans, A1 references, ranges, function calls, arithmetic, comparison, unary operators, and `^` power.
+- **Formula language** — numbers, strings, booleans, A1 references, ranges, cross-sheet references (`Budget!D8`, `SUM(Budget!A1:B2)`), function calls, arithmetic, comparison, unary operators, and `^` power.
 - **Typed values** — number, text, boolean, date serial, error, and blank; spreadsheet error codes (`#DIV/0!`, `#VALUE!`, `#REF!`, `#NAME?`, `#N/A`, `#NUM!`, `#CIRC!`).
 - **Function library** — 55+ functions across math, statistics, text, logic, lookup, date, and finance.
 - **Dependency graph** — precedents/dependents, topological order, cycle detection, and dirty-subgraph incremental recalculation.
-- **Workbook model** — sparse cells, formulas, full and incremental recalculation, A1 addressing.
+- **Workbook model** — sparse cells, formulas, multiple worksheets, full and incremental recalculation, A1 addressing.
+- **Cross-sheet references** — `=Budget!D8`, `=SUM(Budget!D2:D4)`, case-insensitive sheet names; worksheets are recalculated in dependency order and cross-sheet cycles become `#CIRC!`.
 - **Named ranges** — sheet-scoped names such as `Sales = D2:D4`; `=SUM(Sales)` works in evaluation and dependency tracking.
 - **Number formats** — General, fixed decimals with thousands grouping, currency, and percent; formats survive edits and JSON round-trips.
 - **IO** — CSV import/export and a stable JSON workbook format.
 - **CLI** — `eval`, `calc`, `json`, `validate`, `stress`.
-- **Web demo** — an interactive grid with formula bar, dependency highlighting, CSV import/export, and live recalculation.
+- **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation.
 
-The test suite has 55 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cycles, CSV, and JSON.
+The test suite has 65 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, and JSON.
 
 ## Quick start
 
@@ -59,7 +60,7 @@ powershell -ExecutionPolicy Bypass -File web/build.ps1
 python -m http.server 8000 --directory web
 ```
 
-Open http://localhost:8000/. Click a cell to select it, edit the formula bar, and press Enter. Formula cells show a corner mark; the selected cell and its direct dependencies are highlighted. `Load CSV` reads a local file and `Export CSV` downloads the recalculated sheet.
+Open http://localhost:8000/. Click a cell to select it, edit the formula bar, and press Enter. Formula cells show a corner mark; the selected cell and its direct dependencies are highlighted. Worksheet tabs switch between `Budget` and `Summary`, where the summary reads `=Budget!D8`; the `+` tab adds a worksheet. `Load CSV` reads a local file into `Sheet1` and `Export CSV` downloads the active sheet.
 
 The browser demo is a JavaScript target of the same MoonBit core. MoonBit owns the workbook and calculation; JavaScript only renders the DOM.
 
@@ -74,11 +75,17 @@ sheet.set_formula("A2", "=A1 * 2")
 sheet.define_name("Sales", "A1:A2")
 sheet.set_formula("A3", "=SUM(Sales)")
 
-ignore(sheet.recalculate())
-println(sheet.get_value("A3").to_display()) // 30
+let summary = wb.add_sheet("Summary")
+summary.set_formula("B1", "=Sheet1!A3 * 2")
+
+ignore(wb.recalculate_all())
+println(sheet.get_value("A3").to_display())  // 30
+println(summary.get_value("B1").to_display()) // 60
 ```
 
 After the first recalculation the dependency graph is cached. Editing a value marks only that cell and its transitive dependents dirty; `recalculate()` evaluates just that subgraph. Editing a formula rebuilds the graph and falls back to a full topological recalculation.
+
+`Workbook::recalculate_all` orders worksheets by their cross-sheet references and recalculates each sheet with a snapshot of the sheets it reads from. A sheet that has pending edits causes its dependents to be recalculated; worksheets that take part in a cross-sheet cycle are marked `#CIRC!`.
 
 ### JSON workbook
 

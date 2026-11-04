@@ -280,6 +280,55 @@
         max-height: 64vh;
       }
 
+      /* Worksheet tabs */
+      .sheet-tabs {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px 0;
+        border-bottom: 1px solid var(--line);
+        background: #fbf7ef;
+        overflow-x: auto;
+      }
+
+      .sheet-tab {
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 8px 8px 0 0;
+        padding: 7px 12px;
+        font-size: 12.5px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition:
+          background 140ms ease,
+          color 140ms ease;
+      }
+
+      .sheet-tab:hover {
+        background: var(--surface-2);
+        color: var(--ink);
+      }
+
+      .sheet-tab.active {
+        background: var(--surface);
+        border-color: var(--line);
+        color: var(--accent);
+        font-weight: 600;
+        box-shadow: inset 0 2px 0 var(--accent);
+      }
+
+      .sheet-tab.add {
+        font-family: var(--font-mono);
+        font-size: 14px;
+        padding: 5px 10px;
+      }
+
+      .sheet-tab:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+      }
+
       .sheet {
         display: grid;
         min-width: max-content;
@@ -677,6 +726,12 @@
 
       <main class="workspace">
         <section class="sheet-card" aria-label="Spreadsheet">
+          <div
+            id="sheetTabs"
+            class="sheet-tabs"
+            role="tablist"
+            aria-label="Worksheets"
+          ></div>
           <div class="sheet-scroll">
             <div id="sheet" class="sheet" role="grid" aria-label="MoonSheet grid"></div>
           </div>
@@ -717,14 +772,20 @@
               <div><dt>State</dt><dd id="engineState">idle</dd></div>
             </dl>
             <p class="hint">
-              Edit a cell, press Enter. Values are computed by the MoonBit core;
-              the DOM only renders.
+              Edit a cell, press Enter. Switch worksheets with the tabs; formulas
+              can read other sheets, e.g. <code>=Budget!D8</code>.
             </p>
           </div>
 
           <div class="card">
             <div class="card-head"><h2>Try</h2></div>
             <div class="chips">
+              <button class="chip" type="button" data-formula="=Budget!D8">
+                =Budget!D8
+              </button>
+              <button class="chip" type="button" data-formula="=SUM(Budget!D2:D4)">
+                =SUM(Budget!D2:D4)
+              </button>
               <button class="chip" type="button" data-formula="=SUM(Sales)">
                 =SUM(Sales)
               </button>

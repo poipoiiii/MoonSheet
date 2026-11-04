@@ -53,11 +53,14 @@ The parser is a hand-written lexer plus a Pratt parser.
 - Ranges are `Ident:Ident` and are normalized by `Range::new`.
 - `TRUE` / `FALSE` are parsed as boolean literals.
 - Identifiers that are not cell addresses become `Name`; named ranges are resolved by the evaluator and the dependency-graph builder.
+- `Sheet!A1` and `Sheet!A1:B2` are cross-sheet references; sheet names are matched case-insensitively at evaluation time.
 - `parse_formula` strips a leading `=`.
 
 `formula::references` walks the AST and expands ranges into individual addresses for the dependency graph. `formula::references_with` additionally resolves named ranges through a callback, so `=SUM(Sales)` contributes the same edges as `=SUM(D2:D4)`. Ranges larger than 10,000 cells are ignored for graph construction; this keeps pathological formulas from exploding the graph, and the evaluator still computes the range for the function call.
 
 Named ranges are sheet-scoped: `Sheet::define_name("Sales", "D2:D4")` stores the name in the sheet's name map. `EvalContext::with_names` exposes a resolver to the evaluator; `Sheet::build_graph` uses the same resolver so evaluation and dependency tracking stay consistent.
+
+`formula::references_across` returns `(sheet, address)` pairs where `None` means the formula's own sheet. The sheet's internal graph only uses same-sheet edges; cross-sheet edges are lifted to the workbook level, because a sheet's recalculation must be finished before its dependents start.
 
 ## 5. Dependency graph
 
@@ -97,6 +100,19 @@ If `topological_order` returns `None`, every formula cell on the sheet gets `#CI
 
 The full path is always available as a correctness baseline. Tests compare value edits, formula edits, chains, and cycles through the public API.
 
+### 6.3 Workbook pass
+
+`Workbook::recalculate_all`:
+
+1. Builds a sheet-level graph from `Sheet!A1` references (`Sheet::depends_on_sheets`).
+2. Orders worksheets with Kahn's algorithm. Any sheet left unordered is part of a cross-sheet cycle.
+3. Snapshots every sheet's values into a `book` map keyed by upper-cased sheet name.
+4. Recalculates each ordered sheet with `Sheet::recalculate_with(book)`, then refreshes its snapshot.
+5. Marks a sheet's dependents stale whenever the sheet had pending edits, so downstream formulas such as `=Budget!D8` pick up the new value.
+6. Marks every formula cell of a cyclic sheet as `#CIRC!`.
+
+`EvalContext::with_sheets` carries two extra callbacks for cross-sheet reads. A missing sheet yields `#REF!` for single cells and `#REF!`-valued ranges, so `=SUM(Ghost!A1:A2)` reports the error instead of silently summing to zero.
+
 ## 7. Function registry
 
 `functions::call` handles value-based functions. `eval` handles:
@@ -135,14 +151,14 @@ This keeps formatting out of the evaluator: formula semantics never depend on ho
 | `functions` | math, text, dates, statistics |
 | `graph` | dependents, topological order, cycles |
 | `format` | grouping, decimals, currency, percent, non-numeric fallback |
-| `workbook` | chains, incremental edits, cycles, named ranges, formats, conformance table |
+| `workbook` | chains, incremental edits, cycles, named ranges, formats, cross-sheet order/cycles, conformance table |
 | `io` | CSV import/export, JSON round-trip |
 
 Conformance checks go through `Sheet::recalculate`, so they exercise the same path a user sees rather than calling functions in isolation.
 
 ## 11. Known limits
 
-- Named ranges are sheet-scoped; workbook-global names and cross-sheet references (`Sheet2!A1`) are not implemented yet.
+- Named ranges are sheet-scoped; workbook-global names are not implemented. Cross-sheet references work for simple sheet names (no spaces or quoting yet).
 - Cycle handling is sheet-wide (`#CIRC!` for all formula cells) rather than per strongly connected component.
 - Iterative calculation is not implemented.
 - Ranges over 10,000 cells are not expanded into graph edges.

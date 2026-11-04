@@ -165,12 +165,52 @@ pub extern "js" fn js_set_on_csv(cb : (String) -> Unit) -> Unit =
   #| }
 
 ///|
+pub extern "js" fn js_render_tabs(names : String, active : String) -> Unit =
+  #| function(names, active) {
+  #|   const host = document.getElementById('sheetTabs');
+  #|   if (!host) return;
+  #|   const g = (globalThis.__ms = globalThis.__ms || {});
+  #|   host.innerHTML = '';
+  #|   names.split('\n').forEach((name) => {
+  #|     if (!name) return;
+  #|     const tab = document.createElement('button');
+  #|     tab.type = 'button';
+  #|     tab.className = 'sheet-tab' + (name === active ? ' active' : '');
+  #|     tab.textContent = name;
+  #|     tab.setAttribute('role', 'tab');
+  #|     tab.setAttribute('aria-selected', name === active ? 'true' : 'false');
+  #|     tab.addEventListener('click', () => {
+  #|       if (g.onSheetSelect) g.onSheetSelect(name);
+  #|     });
+  #|     host.appendChild(tab);
+  #|   });
+  #|   const add = document.createElement('button');
+  #|   add.type = 'button';
+  #|   add.className = 'sheet-tab add';
+  #|   add.textContent = '+';
+  #|   add.title = 'Add worksheet';
+  #|   add.setAttribute('aria-label', 'Add worksheet');
+  #|   add.addEventListener('click', () => {
+  #|     if (g.onAddSheet) g.onAddSheet();
+  #|   });
+  #|   host.appendChild(add);
+  #| }
+
+///|
+pub extern "js" fn js_set_on_sheet_select(cb : (String) -> Unit) -> Unit =
+  #| function(cb) {
+  #|   (globalThis.__ms = globalThis.__ms || {}).onSheetSelect = cb;
+  #| }
+
+///|
 pub extern "js" fn js_bind_actions(
   on_new : () -> Unit,
   on_export : () -> Unit,
+  on_add_sheet : () -> Unit,
 ) -> Unit =
-  #| function(onNew, onExport) {
-  #|   const g = globalThis.__ms;
+  #| function(onNew, onExport, onAddSheet) {
+  #|   const g = (globalThis.__ms = globalThis.__ms || {});
+  #|   g.onAddSheet = onAddSheet;
   #|   const input = document.getElementById('formulaInput');
   #|   const commit = () => {
   #|     if (g.onCommit) g.onCommit(input.value);

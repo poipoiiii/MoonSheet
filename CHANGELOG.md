@@ -14,6 +14,10 @@ All notable changes to this project are documented in this file.
 - Expression evaluator with error propagation and lazy `IF` / `IFERROR`.
 - Function library: math/statistics, text, logic, lookup, conditional aggregates, date, and finance (55+ functions).
 - Sheet-scoped named ranges (`Sales = D2:D4`), resolved during evaluation and dependency-graph construction.
+- Cross-sheet references (`=Budget!D8`, `=SUM(Budget!D2:D4)`) with case-insensitive sheet names.
+- Workbook-level recalculation in dependency order, with downstream invalidation after edits and `#CIRC!` marking for cross-sheet cycles.
+- Worksheet insertion order is preserved for stable tabs and JSON round-trips.
+- Browser demo: worksheet tabs, add-sheet action, and a `Budget` / `Summary` sample workbook that reads values across sheets.
 - Per-cell number formats: General, fixed decimals with thousands grouping, currency, and percent. Formats survive value edits and JSON round-trips.
 - Dependency graph with precedents, dependents, topological order, and cycle detection.
 - Workbook / worksheet model with full and dirty-subgraph incremental recalculation.
@@ -23,4 +27,4 @@ All notable changes to this project are documented in this file.
 - CLI: `eval`, `calc`, `json`, `validate`, `stress`.
 - Browser demo: grid, formula bar, selection, dependency highlighting, CSV import/export, live recalculation.
 - Design system document and design notes.
-- 55 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cycles, CSV, and JSON.
+- 65 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cross-sheet references, cycles, CSV, and JSON.
