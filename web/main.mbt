@@ -79,7 +79,7 @@ fn make_sample_workbook() -> @workbook.Workbook {
   ignore(summary.set_format("B4", @types.CellFormat::Currency("¥", 2)))
   ignore(summary.set_format("B5", @types.CellFormat::Currency("¥", 2)))
   ignore(summary.set_value("A7", @types.Value::Text("Share of tax")))
-  ignore(summary.set_formula("B7", "=IFERROR(Budget!D7/Budget!D8*100,0)"))
+  ignore(summary.set_formula("B7", "=IFERROR(Budget!D7/Budget!D8,0)"))
   ignore(summary.set_format("B7", @types.CellFormat::Percent(1)))
   ignore(workbook.recalculate_all())
   workbook

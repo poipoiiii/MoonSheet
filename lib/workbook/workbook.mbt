@@ -598,7 +598,9 @@ fn eval_expr(
   values : Map[Int32, @types.Value],
   names : Map[String, @types.Range],
   book : Map[String, Map[Int32, @types.Value]],
+  sheet_name : String,
 ) -> @types.Value {
+  let self_name = upper_name(sheet_name)
   let ctx = @eval.EvalContext::with_sheets(
     fn(addr) {
       match values.get(addr.key()) {
@@ -609,19 +611,30 @@ fn eval_expr(
     fn(range) { range_values(values, range) },
     fn(name) { names.get(name) },
     fn(sheet, addr) {
-      match book.get(upper_name(sheet)) {
-        Some(sheet_values) =>
-          match sheet_values.get(addr.key()) {
-            Some(value) => value
-            None => @types.Value::Blank
-          }
-        None => @types.Value::Error(@types.CellError::Ref)
+      if upper_name(sheet) == self_name {
+        match values.get(addr.key()) {
+          Some(value) => value
+          None => @types.Value::Blank
+        }
+      } else {
+        match book.get(upper_name(sheet)) {
+          Some(sheet_values) =>
+            match sheet_values.get(addr.key()) {
+              Some(value) => value
+              None => @types.Value::Blank
+            }
+          None => @types.Value::Error(@types.CellError::Ref)
+        }
       }
     },
     fn(sheet, range) {
-      match book.get(upper_name(sheet)) {
-        Some(sheet_values) => range_values(sheet_values, range)
-        None => ref_error_values(range)
+      if upper_name(sheet) == self_name {
+        range_values(values, range)
+      } else {
+        match book.get(upper_name(sheet)) {
+          Some(sheet_values) => range_values(sheet_values, range)
+          None => ref_error_values(range)
+        }
       }
     },
   )
@@ -634,9 +647,10 @@ fn eval_formula_text(
   values : Map[Int32, @types.Value],
   names : Map[String, @types.Range],
   book : Map[String, Map[Int32, @types.Value]],
+  sheet_name : String,
 ) -> @types.Value {
   match @formula.parse_formula(text) {
-    Ok(expr) => eval_expr(expr, values, names, book)
+    Ok(expr) => eval_expr(expr, values, names, book, sheet_name)
     Err(_) => @types.Value::Error(@types.CellError::ValueErr)
   }
 }
@@ -688,10 +702,17 @@ fn Sheet::build_graph(self : Sheet) -> Map[Int32, @formula.Expr] {
               Ok(expr) => {
                 exprs[key] = expr
                 for
-                  addr in @formula.references_with(expr, fn(name) {
+                  pair in @formula.references_across(expr, fn(name) {
                     self.named_range(name)
                   }) {
-                  graph.add_dependency(key, addr.key())
+                  let (sheet, addr) = pair
+                  let same_sheet = match sheet {
+                    Some(name) => upper_name(name) == upper_name(self.name)
+                    None => true
+                  }
+                  if same_sheet {
+                    graph.add_dependency(key, addr.key())
+                  }
                 }
               }
               Err(_) => ()
@@ -763,7 +784,7 @@ fn Sheet::recalculate_full_in(
       for key in order {
         match exprs.get(key) {
           Some(expr) => {
-            let value = eval_expr(expr, values, self.names, book)
+            let value = eval_expr(expr, values, self.names, book, self.name)
             values[key] = value
             self.write_formula_value(key, value)
           }
@@ -816,7 +837,13 @@ fn Sheet::recalculate_dirty_in(
           Some(cell) =>
             match cell.formula {
               Some(text) => {
-                let value = eval_formula_text(text, values, self.names, book)
+                let value = eval_formula_text(
+                  text,
+                  values,
+                  self.names,
+                  book,
+                  self.name,
+                )
                 values[key] = value
                 self.cells[key] = {
                   formula: Some(text),

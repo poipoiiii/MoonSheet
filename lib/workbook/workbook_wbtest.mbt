@@ -178,3 +178,28 @@ test "sheet order is preserved for tabs" {
   assert_eq(names[0], "Budget")
   assert_eq(names[1], "Summary")
 }
+
+///|
+test "self-sheet references behave like local references" {
+  let workbook = Workbook::new()
+  let sheet = workbook.add_sheet("Sheet1")
+  ignore(sheet.set_value("A1", @types.Value::Number(4.0)))
+  ignore(sheet.set_formula("A2", "=Sheet1!A1*2"))
+  ignore(workbook.recalculate_all())
+  assert_eq(sheet.get_value("A2"), @types.Value::Number(8.0))
+  ignore(sheet.set_value("A1", @types.Value::Number(5.0)))
+  ignore(workbook.recalculate_all())
+  assert_eq(sheet.get_value("A2"), @types.Value::Number(10.0))
+}
+
+///|
+test "self-sheet reference cycle is detected" {
+  let workbook = Workbook::new()
+  let sheet = workbook.add_sheet("Sheet1")
+  ignore(sheet.set_formula("B1", "=Sheet1!B1"))
+  ignore(workbook.recalculate_all())
+  assert_eq(
+    sheet.get_value("B1"),
+    @types.Value::Error(@types.CellError::Circular),
+  )
+}
