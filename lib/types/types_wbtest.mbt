@@ -26,6 +26,19 @@ test "range normalizes bounds" {
 }
 
 ///|
+test "range parse" {
+  assert_eq(
+    Range::parse("B2"),
+    Some(Range::new(Address::new(1, 1), Address::new(1, 1))),
+  )
+  assert_eq(
+    Range::parse("A1:B3"),
+    Some(Range::new(Address::new(0, 0), Address::new(2, 1))),
+  )
+  assert_eq(Range::parse("nope"), None)
+}
+
+///|
 test "cell error codes" {
   assert_eq(CellError::DivZero.code(), "#DIV/0!")
   assert_eq(CellError::Name.code(), "#NAME?")

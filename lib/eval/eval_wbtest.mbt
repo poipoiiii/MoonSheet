@@ -74,6 +74,60 @@ test "countif and sumif" {
 }
 
 ///|
+test "named range expands in function calls" {
+  let ctx = EvalContext::with_names(
+    fn(_addr) { @types.Value::Blank },
+    fn(_range) {
+      [
+        @types.Value::Number(10.0),
+        @types.Value::Number(20.0),
+        @types.Value::Number(30.0),
+      ]
+    },
+    fn(name) {
+      if name == "SALES" {
+        Some(
+          @types.Range::new(
+            @types.Address::new(0, 0),
+            @types.Address::new(2, 0),
+          ),
+        )
+      } else {
+        None
+      }
+    },
+  )
+  assert_eq(eval_formula("=SUM(Sales)", ctx), @types.Value::Number(60.0))
+}
+
+///|
+test "single-cell name works as scalar" {
+  let ctx = EvalContext::with_names(
+    fn(addr) {
+      if addr == @types.Address::new(0, 0) {
+        @types.Value::Number(0.5)
+      } else {
+        @types.Value::Blank
+      }
+    },
+    fn(_range) { [] },
+    fn(name) {
+      if name == "RATE" {
+        Some(
+          @types.Range::new(
+            @types.Address::new(0, 0),
+            @types.Address::new(0, 0),
+          ),
+        )
+      } else {
+        None
+      }
+    },
+  )
+  assert_eq(eval_formula("=RATE*100", ctx), @types.Value::Number(50.0))
+}
+
+///|
 test "index and match" {
   let ctx = table_context([
     @types.Value::Number(1.0),

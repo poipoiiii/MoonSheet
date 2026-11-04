@@ -18,6 +18,7 @@ pub struct Sheet {
   mut dirty : Map[Int32, Bool]
   mut graph_valid : Bool
   mut full_recalc : Bool
+  names : Map[String, @types.Range]
 }
 
 ///|
@@ -29,6 +30,7 @@ pub fn Sheet::new(name : String) -> Sheet {
     dirty: Map([], capacity=0),
     graph_valid: false,
     full_recalc: true,
+    names: Map([], capacity=4),
   }
 }
 
@@ -61,6 +63,19 @@ pub fn Workbook::names(self : Workbook) -> Array[String] {
     out.push(name)
   }
   out
+}
+
+///|
+pub fn Workbook::define_name(
+  self : Workbook,
+  sheet_name : String,
+  name : String,
+  a1_range : String,
+) -> Bool {
+  match self.sheet(sheet_name) {
+    Some(sheet) => sheet.define_name(name, a1_range)
+    None => false
+  }
 }
 
 ///|
@@ -134,6 +149,59 @@ pub fn Sheet::get_value(self : Sheet, a1 : String) -> @types.Value {
 }
 
 ///|
+fn upper_name(name : String) -> String {
+  let mut out = ""
+  for c in name.to_array() {
+    out = out + c.to_ascii_uppercase().to_string()
+  }
+  out
+}
+
+///|
+/// Define (or replace) a sheet-scoped named range, e.g. `Sales` = `D2:D4`.
+pub fn Sheet::define_name(
+  self : Sheet,
+  name : String,
+  a1_range : String,
+) -> Bool {
+  match @types.Range::parse(a1_range) {
+    Some(range) => {
+      self.names[upper_name(name)] = range
+      self.graph_valid = false
+      self.full_recalc = true
+      true
+    }
+    None => false
+  }
+}
+
+///|
+pub fn Sheet::remove_name(self : Sheet, name : String) -> Bool {
+  let key = upper_name(name)
+  let existed = self.names.get(key) is Some(_)
+  if existed {
+    ignore(self.names.remove(key))
+    self.graph_valid = false
+    self.full_recalc = true
+  }
+  existed
+}
+
+///|
+pub fn Sheet::named_range(self : Sheet, name : String) -> @types.Range? {
+  self.names.get(upper_name(name))
+}
+
+///|
+pub fn Sheet::name_list(self : Sheet) -> Array[String] {
+  let out : Array[String] = []
+  for name in self.names.keys() {
+    out.push(name)
+  }
+  out
+}
+
+///|
 pub fn Sheet::get_formula(self : Sheet, a1 : String) -> String? {
   match @types.Address::parse(a1) {
     Some(addr) =>
@@ -153,7 +221,10 @@ pub fn Sheet::dependencies(self : Sheet, a1 : String) -> Array[String] {
     Some(text) =>
       match @formula.parse_formula(text) {
         Ok(expr) =>
-          for addr in @formula.references(expr) {
+          for
+            addr in @formula.references_with(expr, fn(name) {
+              self.named_range(name)
+            }) {
             out.push(addr.to_a1())
           }
         Err(_) => ()
@@ -205,8 +276,9 @@ fn range_values(
 fn eval_expr(
   expr : @formula.Expr,
   values : Map[Int32, @types.Value],
+  names : Map[String, @types.Range],
 ) -> @types.Value {
-  let ctx = @eval.EvalContext::new(
+  let ctx = @eval.EvalContext::with_names(
     fn(addr) {
       match values.get(addr.key()) {
         Some(value) => value
@@ -214,6 +286,7 @@ fn eval_expr(
       }
     },
     fn(range) { range_values(values, range) },
+    fn(name) { names.get(name) },
   )
   @eval.eval(expr, ctx)
 }
@@ -222,9 +295,10 @@ fn eval_expr(
 fn eval_formula_text(
   text : String,
   values : Map[Int32, @types.Value],
+  names : Map[String, @types.Range],
 ) -> @types.Value {
   match @formula.parse_formula(text) {
-    Ok(expr) => eval_expr(expr, values)
+    Ok(expr) => eval_expr(expr, values, names)
     Err(_) => @types.Value::Error(@types.CellError::ValueErr)
   }
 }
@@ -270,7 +344,10 @@ fn Sheet::build_graph(self : Sheet) -> Map[Int32, @formula.Expr] {
             match @formula.parse_formula(text) {
               Ok(expr) => {
                 exprs[key] = expr
-                for addr in @formula.references(expr) {
+                for
+                  addr in @formula.references_with(expr, fn(name) {
+                    self.named_range(name)
+                  }) {
                   graph.add_dependency(key, addr.key())
                 }
               }
@@ -335,7 +412,7 @@ pub fn Sheet::recalculate_full(self : Sheet) -> Int32 {
       for key in order {
         match exprs.get(key) {
           Some(expr) => {
-            let value = eval_expr(expr, values)
+            let value = eval_expr(expr, values, self.names)
             values[key] = value
             self.write_formula_value(key, value)
           }
@@ -380,7 +457,7 @@ pub fn Sheet::recalculate_dirty(self : Sheet) -> Int32 {
           Some(cell) =>
             match cell.formula {
               Some(text) => {
-                let value = eval_formula_text(text, values)
+                let value = eval_formula_text(text, values, self.names)
                 values[key] = value
                 self.cells[key] = { formula: Some(text), value, }
               }

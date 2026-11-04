@@ -23,15 +23,20 @@ pub struct Sheet {
   mut dirty : Map[Int32, Bool]
   mut graph_valid : Bool
   mut full_recalc : Bool
+  names : Map[String, @types.Range]
 }
+pub fn Sheet::define_name(Self, String, String) -> Bool
 pub fn Sheet::dependencies(Self, String) -> Array[String]
 pub fn Sheet::entries(Self) -> Array[(String, String?, @types.Value)]
 pub fn Sheet::get_formula(Self, String) -> String?
 pub fn Sheet::get_value(Self, String) -> @types.Value
+pub fn Sheet::name_list(Self) -> Array[String]
+pub fn Sheet::named_range(Self, String) -> @types.Range?
 pub fn Sheet::new(String) -> Self
 pub fn Sheet::recalculate(Self) -> Int32
 pub fn Sheet::recalculate_dirty(Self) -> Int32
 pub fn Sheet::recalculate_full(Self) -> Int32
+pub fn Sheet::remove_name(Self, String) -> Bool
 pub fn Sheet::set_formula(Self, String, String) -> Bool
 pub fn Sheet::set_value(Self, String, @types.Value) -> Bool
 pub fn Sheet::value_at(Self, @types.Address) -> @types.Value
@@ -40,6 +45,7 @@ pub struct Workbook {
   sheets : Map[String, Sheet]
 }
 pub fn Workbook::add_sheet(Self, String) -> Sheet
+pub fn Workbook::define_name(Self, String, String, String) -> Bool
 pub fn Workbook::names(Self) -> Array[String]
 pub fn Workbook::new() -> Self
 pub fn Workbook::recalculate_all(Self) -> Int32

@@ -13,6 +13,8 @@ pub fn parse_formula(String) -> Result[Expr, ParseError]
 
 pub fn references(Expr) -> Array[@types.Address]
 
+pub fn references_with(Expr, (String) -> @types.Range?) -> Array[@types.Address]
+
 // Errors
 
 // Types and methods

@@ -44,6 +44,7 @@ pub struct Range {
 pub fn Range::equal(Self, Self) -> Bool
 pub fn Range::new(Address, Address) -> Self
 pub fn Range::not_equal(Self, Self) -> Bool
+pub fn Range::parse(String) -> Self?
 pub fn Range::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Value {

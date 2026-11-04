@@ -9,6 +9,7 @@
 pub struct EvalContext {
   get_value : (@types.Address) -> @types.Value
   get_range : (@types.Range) -> Array[@types.Value]
+  get_named_range : (String) -> @types.Range?
 }
 
 ///|
@@ -16,7 +17,16 @@ pub fn EvalContext::new(
   get_value : (@types.Address) -> @types.Value,
   get_range : (@types.Range) -> Array[@types.Value],
 ) -> EvalContext {
-  { get_value, get_range, }
+  { get_value, get_range, get_named_range: fn(_name) { None }, }
+}
+
+///|
+pub fn EvalContext::with_names(
+  get_value : (@types.Address) -> @types.Value,
+  get_range : (@types.Range) -> Array[@types.Value],
+  get_named_range : (String) -> @types.Range?,
+) -> EvalContext {
+  { get_value, get_range, get_named_range, }
 }
 
 ///|
@@ -47,7 +57,16 @@ pub fn eval(expr : @formula.Expr, ctx : EvalContext) -> @types.Value {
     @formula.Expr::Error(e) => @types.Value::Error(e)
     @formula.Expr::Ref(addr) => (ctx.get_value)(addr)
     @formula.Expr::Range(_) => @types.Value::Error(@types.CellError::ValueErr)
-    @formula.Expr::Name(_) => @types.Value::Error(@types.CellError::Name)
+    @formula.Expr::Name(name) =>
+      match (ctx.get_named_range)(upper_string(name)) {
+        Some(range) =>
+          if range.start == range.end {
+            (ctx.get_value)(range.start)
+          } else {
+            @types.Value::Error(@types.CellError::ValueErr)
+          }
+        None => @types.Value::Error(@types.CellError::Name)
+      }
     @formula.Expr::Unary(op, inner) => {
       let value = eval(inner, ctx)
       match (op, value) {
@@ -168,6 +187,16 @@ fn eval_call(
             values.push(item)
           }
         }
+        @formula.Expr::Name(name) =>
+          match (ctx.get_named_range)(upper_string(name)) {
+            Some(range) => {
+              let items = (ctx.get_range)(range)
+              for item in items {
+                values.push(item)
+              }
+            }
+            None => values.push(@types.Value::Error(@types.CellError::Name))
+          }
         _ => values.push(eval(arg, ctx))
       }
     }
@@ -318,17 +347,28 @@ fn criteria_matches(value : @types.Value, criteria : @types.Value) -> Bool {
 }
 
 ///|
+fn range_arg_from(
+  range : @types.Range,
+  ctx : EvalContext,
+) -> (Array[@types.Value], Int32, Int32) {
+  let values = (ctx.get_range)(range)
+  let rows = range.end.row - range.start.row + 1
+  let cols = range.end.col - range.start.col + 1
+  (values, rows, cols)
+}
+
+///|
 fn range_arg(
   arg : @formula.Expr,
   ctx : EvalContext,
 ) -> (Array[@types.Value], Int32, Int32)? {
   match arg {
-    @formula.Expr::Range(range) => {
-      let values = (ctx.get_range)(range)
-      let rows = range.end.row - range.start.row + 1
-      let cols = range.end.col - range.start.col + 1
-      Some((values, rows, cols))
-    }
+    @formula.Expr::Range(range) => Some(range_arg_from(range, ctx))
+    @formula.Expr::Name(name) =>
+      match (ctx.get_named_range)(upper_string(name)) {
+        Some(range) => Some(range_arg_from(range, ctx))
+        None => None
+      }
     _ => None
   }
 }

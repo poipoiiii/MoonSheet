@@ -17,8 +17,10 @@ pub fn eval_formula(String, EvalContext) -> @types.Value
 pub struct EvalContext {
   get_value : (@types.Address) -> @types.Value
   get_range : (@types.Range) -> Array[@types.Value]
+  get_named_range : (String) -> @types.Range?
 }
 pub fn EvalContext::new((@types.Address) -> @types.Value, (@types.Range) -> Array[@types.Value]) -> Self
+pub fn EvalContext::with_names((@types.Address) -> @types.Value, (@types.Range) -> Array[@types.Value], (String) -> @types.Range?) -> Self
 
 // Type aliases
 

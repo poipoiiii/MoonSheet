@@ -52,9 +52,12 @@ The parser is a hand-written lexer plus a Pratt parser.
 - Function calls are `Ident(args...)`; names are uppercased.
 - Ranges are `Ident:Ident` and are normalized by `Range::new`.
 - `TRUE` / `FALSE` are parsed as boolean literals.
+- Identifiers that are not cell addresses become `Name`; named ranges are resolved by the evaluator and the dependency-graph builder.
 - `parse_formula` strips a leading `=`.
 
-`formula::references` walks the AST and expands ranges into individual addresses for the dependency graph. Ranges larger than 10,000 cells are ignored for graph construction; this keeps pathological formulas from exploding the graph, and the evaluator still computes the range for the function call.
+`formula::references` walks the AST and expands ranges into individual addresses for the dependency graph. `formula::references_with` additionally resolves named ranges through a callback, so `=SUM(Sales)` contributes the same edges as `=SUM(D2:D4)`. Ranges larger than 10,000 cells are ignored for graph construction; this keeps pathological formulas from exploding the graph, and the evaluator still computes the range for the function call.
+
+Named ranges are sheet-scoped: `Sheet::define_name("Sales", "D2:D4")` stores the name in the sheet's name map. `EvalContext::with_names` exposes a resolver to the evaluator; `Sheet::build_graph` uses the same resolver so evaluation and dependency tracking stay consistent.
 
 ## 5. Dependency graph
 
@@ -126,6 +129,7 @@ Conformance checks go through `Sheet::recalculate`, so they exercise the same pa
 
 ## 10. Known limits
 
+- Named ranges are sheet-scoped; workbook-global names and cross-sheet references (`Sheet2!A1`) are not implemented yet.
 - Cycle handling is sheet-wide (`#CIRC!` for all formula cells) rather than per strongly connected component.
 - Iterative calculation is not implemented.
 - Ranges over 10,000 cells are not expanded into graph edges.

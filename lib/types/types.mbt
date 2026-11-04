@@ -180,3 +180,23 @@ pub fn Range::new(a : Address, b : Address) -> Range {
     end: { row: row_end, col: col_end, },
   }
 }
+
+///|
+/// Parse `A1` or `A1:B2` into a normalized range.
+pub fn Range::parse(text : String) -> Range? {
+  let parts = text.trim().split(":").to_array()
+  if parts.length() == 1 {
+    match Address::parse(parts[0].to_owned()) {
+      Some(addr) => Some(Range::new(addr, addr))
+      None => None
+    }
+  } else if parts.length() == 2 {
+    match
+      (Address::parse(parts[0].to_owned()), Address::parse(parts[1].to_owned())) {
+      (Some(a), Some(b)) => Some(Range::new(a, b))
+      _ => None
+    }
+  } else {
+    None
+  }
+}

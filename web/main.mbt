@@ -41,8 +41,9 @@ fn make_sample_sheet() -> @workbook.Sheet {
   ignore(sheet.set_formula("D4", "=B4*C4"))
   ignore(sheet.set_value("E4", @types.Value::Text("monthly")))
 
+  ignore(sheet.define_name("Sales", "D2:D4"))
   ignore(sheet.set_value("A6", @types.Value::Text("Subtotal")))
-  ignore(sheet.set_formula("D6", "=SUM(D2:D4)"))
+  ignore(sheet.set_formula("D6", "=SUM(Sales)"))
   ignore(sheet.set_formula("E6", "=IF(D8>1000,\"over\",\"ok\")"))
 
   ignore(sheet.set_value("A7", @types.Value::Text("Tax 8%")))

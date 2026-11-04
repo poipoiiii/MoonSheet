@@ -13,6 +13,7 @@ All notable changes to this project are documented in this file.
 - Boolean literals, string literals, function calls, ranges, arithmetic, comparison, unary operators, and power.
 - Expression evaluator with error propagation and lazy `IF` / `IFERROR`.
 - Function library: math/statistics, text, logic, lookup, conditional aggregates, date, and finance (55+ functions).
+- Sheet-scoped named ranges (`Sales = D2:D4`), resolved during evaluation and dependency-graph construction.
 - Dependency graph with precedents, dependents, topological order, and cycle detection.
 - Workbook / worksheet model with full and dirty-subgraph incremental recalculation.
 - Cycle handling: formula cells become `#CIRC!` when a cycle is detected.
@@ -21,4 +22,4 @@ All notable changes to this project are documented in this file.
 - CLI: `eval`, `calc`, `json`, `validate`, `stress`.
 - Browser demo: grid, formula bar, selection, dependency highlighting, CSV import/export, live recalculation.
 - Design system document and design notes.
-- 43 tests covering types, parsing, evaluation, functions, dates, graphs, recalculation, cycles, CSV, and JSON.
+- 49 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, recalculation, cycles, CSV, and JSON.

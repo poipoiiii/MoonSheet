@@ -11,11 +11,12 @@ MoonSheet is not an Excel clone. It is the reusable calculation core that report
 - **Function library** — 55+ functions across math, statistics, text, logic, lookup, date, and finance.
 - **Dependency graph** — precedents/dependents, topological order, cycle detection, and dirty-subgraph incremental recalculation.
 - **Workbook model** — sparse cells, formulas, full and incremental recalculation, A1 addressing.
+- **Named ranges** — sheet-scoped names such as `Sales = D2:D4`; `=SUM(Sales)` works in evaluation and dependency tracking.
 - **IO** — CSV import/export and a stable JSON workbook format.
 - **CLI** — `eval`, `calc`, `json`, `validate`, `stress`.
 - **Web demo** — an interactive grid with formula bar, dependency highlighting, CSV import/export, and live recalculation.
 
-The test suite has 43 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, incremental recalculation, cycles, CSV, and JSON.
+The test suite has 49 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, incremental recalculation, cycles, CSV, and JSON.
 
 ## Quick start
 
@@ -69,7 +70,8 @@ let sheet = wb.add_sheet("Sheet1")
 
 sheet.set_value("A1", @types.Value::Number(10.0))
 sheet.set_formula("A2", "=A1 * 2")
-sheet.set_formula("A3", "=SUM(A1:A2)")
+sheet.define_name("Sales", "A1:A2")
+sheet.set_formula("A3", "=SUM(Sales)")
 
 ignore(sheet.recalculate())
 println(sheet.get_value("A3").to_display()) // 30
