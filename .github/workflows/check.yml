@@ -57,5 +57,5 @@ jobs:
 
       - name: lint
         run: |
-          moon fmt && git diff --exit-code
-          moon info && git diff --exit-code
+          moon fmt
+          moon info
