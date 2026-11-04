@@ -1,0 +1,77 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/formula"
+
+import {
+  "moonbitlang/core/debug",
+  "poipoiiii/moonsheet/lib/types",
+}
+
+// Values
+pub fn parse(String) -> Result[Expr, ParseError]
+
+pub fn parse_formula(String) -> Result[Expr, ParseError]
+
+pub fn references(Expr) -> Array[@types.Address]
+
+// Errors
+
+// Types and methods
+pub(all) enum BinaryOp {
+  Add
+  Sub
+  Mul
+  Div
+  Pow
+  Concat
+  Eq
+  Ne
+  Lt
+  Le
+  Gt
+  Ge
+} derive(Eq, @debug.Debug)
+pub fn BinaryOp::equal(Self, Self) -> Bool
+pub fn BinaryOp::not_equal(Self, Self) -> Bool
+pub fn BinaryOp::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Expr {
+  Number(Double)
+  Text(String)
+  Boolean(Bool)
+  Error(@types.CellError)
+  Ref(@types.Address)
+  Range(@types.Range)
+  Unary(UnaryOp, Expr)
+  Binary(BinaryOp, Expr, Expr)
+  Call(String, Array[Expr])
+  Name(String)
+} derive(Eq, @debug.Debug)
+pub fn Expr::equal(Self, Self) -> Bool
+pub fn Expr::not_equal(Self, Self) -> Bool
+pub fn Expr::to_repr(Self) -> @debug.Repr
+
+pub struct ParseError {
+  message : String
+  position : Int32
+} derive(Eq, @debug.Debug)
+pub fn ParseError::equal(Self, Self) -> Bool
+pub fn ParseError::new(String, Int32) -> Self
+pub fn ParseError::not_equal(Self, Self) -> Bool
+pub fn ParseError::to_repr(Self) -> @debug.Repr
+
+type Token derive(Eq, @debug.Debug)
+pub fn Token::equal(Self, Self) -> Bool
+pub fn Token::not_equal(Self, Self) -> Bool
+pub fn Token::to_repr(Self) -> @debug.Repr
+
+pub(all) enum UnaryOp {
+  Neg
+  Plus
+} derive(Eq, @debug.Debug)
+pub fn UnaryOp::equal(Self, Self) -> Bool
+pub fn UnaryOp::not_equal(Self, Self) -> Bool
+pub fn UnaryOp::to_repr(Self) -> @debug.Repr
+
+// Type aliases
+
+// Traits

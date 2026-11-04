@@ -1,0 +1,135 @@
+# MoonSheet Design Notes
+
+## 1. Goals
+
+MoonSheet is a **headless calculation core**, not a spreadsheet application. The design optimizes for:
+
+- clear package boundaries and a reusable public API;
+- correct, testable formula semantics;
+- predictable recalculation for chains and cycles;
+- running on native, wasm, and js without platform-specific code in the core.
+
+The demo layers (`cmd/moonsheet`, `web/`) own IO and rendering only.
+
+## 2. Package layers
+
+```text
+types  <- formula  <- eval  <- workbook  <- io
+                    ^        ^
+                    |        |
+                 functions  graph
+```
+
+| Package | Responsibility | Explicit non-goal |
+|---|---|---|
+| `types` | `Value`, `CellError`, `Address`, `Range`, A1 parsing/printing | No formula text |
+| `formula` | lexer, Pratt parser, AST, reference collection | No workbook access |
+| `functions` | value-based functions, type coercion helpers | No ranges or recalculation |
+| `eval` | AST evaluation, errors, control flow, range-aware functions | No recalculation order |
+| `graph` | precedents/dependents, topological order, cycle detection | No evaluation |
+| `workbook` | cells, formulas, graph cache, full/incremental recalculation | No IO |
+| `io` | CSV and JSON boundaries | No calculation semantics |
+
+`eval` depends on `functions`; `workbook` depends on `eval` and `graph`. There is no cycle.
+
+## 3. Value model
+
+`Value` is one of `Number`, `Text`, `Boolean`, `Date`, `Error`, `Blank`.
+
+Design choices:
+
+- **Errors are values.** `#DIV/0!` propagates through expressions instead of raising, so a batch calculation never aborts.
+- **Blank is distinct from `Text("")`.** This matters for `COUNT`, `COUNTA`, `COUNTBLANK`, and comparison.
+- **Dates are serial numbers.** The 1900 date system is used, including Excel's phantom 1900-02-29 behavior. Formatting belongs to the presentation layer.
+- **Coercion is centralized.** `as_number`, `as_text`, and `as_bool` live in the evaluator/function layer and are covered by tests.
+
+## 4. Formula language
+
+The parser is a hand-written lexer plus a Pratt parser.
+
+- Precedence: comparison < additive < multiplicative < power < unary < primary.
+- `^` is right-associative.
+- Function calls are `Ident(args...)`; names are uppercased.
+- Ranges are `Ident:Ident` and are normalized by `Range::new`.
+- `TRUE` / `FALSE` are parsed as boolean literals.
+- `parse_formula` strips a leading `=`.
+
+`formula::references` walks the AST and expands ranges into individual addresses for the dependency graph. Ranges larger than 10,000 cells are ignored for graph construction; this keeps pathological formulas from exploding the graph, and the evaluator still computes the range for the function call.
+
+## 5. Dependency graph
+
+`DependencyGraph` keeps two maps:
+
+- `precedents[node]` — cells the formula depends on;
+- `dependents[cell]` — formulas that depend on the cell.
+
+`add_dependency` deduplicates edges. `topological_order(nodes)` uses Kahn's algorithm over the given node set and returns `None` on a cycle.
+
+The graph is built from all formula cells after a formula edit. Value edits reuse the cached graph.
+
+## 6. Recalculation
+
+### 6.1 Full path
+
+`Sheet::recalculate_full`:
+
+1. Parse every formula and rebuild the graph.
+2. Collect formula keys.
+3. Topologically order them.
+4. Evaluate in order, reading already-computed values from a snapshot map.
+5. Write computed values back to cells.
+
+If `topological_order` returns `None`, every formula cell on the sheet gets `#CIRC!`. This is conservative and easy to explain; it avoids leaving partially updated values around a cycle.
+
+### 6.2 Incremental path
+
+`Sheet::recalculate_dirty`:
+
+1. Snapshot current values.
+2. Filter the dirty set to formula cells.
+3. Topologically order that subset.
+4. Evaluate only those cells.
+
+`set_value` marks the edited cell and all transitive dependents dirty. `set_formula` invalidates the graph and forces a full rebuild, because the edge set changed.
+
+The full path is always available as a correctness baseline. Tests compare value edits, formula edits, chains, and cycles through the public API.
+
+## 7. Function registry
+
+`functions::call` handles value-based functions. `eval` handles:
+
+- `IF` / `IFERROR` — lazy branch evaluation;
+- `COUNTIF` / `SUMIF` / `AVERAGEIF` — criteria matching over ranges;
+- `INDEX` / `MATCH` / `VLOOKUP` — range shape matters, so they receive the original `Range` AST.
+
+This split keeps `functions` simple and avoids giving it a dependency on the workbook.
+
+## 8. IO boundaries
+
+- CSV: comma-separated, one row per line; export quotes commas, quotes, and newlines.
+- JSON: explicit `{ formula, kind, value }` per cell. `kind` preserves the type of non-formula cells; formulas are recalculated on import.
+- XLSX: not in 0.1.0. A future adapter should reuse an existing xlsx reader and call `Sheet::set_value` / `Sheet::set_formula`.
+
+## 9. Testing strategy
+
+| Layer | What is tested |
+|---|---|
+| `types` | A1 round-trip, ranges, error codes, display |
+| `formula` | precedence, calls, ranges, trailing-token errors, reference collection |
+| `eval` | arithmetic, errors, lazy `IF`, range functions |
+| `functions` | math, text, dates, statistics |
+| `graph` | dependents, topological order, cycles |
+| `workbook` | chains, incremental edits, cycles, formula preservation, conformance table |
+| `io` | CSV import/export, JSON round-trip |
+
+Conformance checks go through `Sheet::recalculate`, so they exercise the same path a user sees rather than calling functions in isolation.
+
+## 10. Known limits
+
+- Cycle handling is sheet-wide (`#CIRC!` for all formula cells) rather than per strongly connected component.
+- Iterative calculation is not implemented.
+- Ranges over 10,000 cells are not expanded into graph edges.
+- XLSX is deferred.
+- Styles, number formats, charts, and collaboration are out of scope.
+
+These limits are deliberate: the product is the calculation core, and each limit has a clear extension point.

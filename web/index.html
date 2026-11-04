@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MoonSheet — MoonBit spreadsheet core</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f5f1e8;
+        --surface: #fffdf8;
+        --surface-2: #f1eadf;
+        --ink: #1e1b17;
+        --muted: #6e675d;
+        --line: #e3dccf;
+        --accent: #b9502e;
+        --accent-soft: #f3ded4;
+        --dep: #2e5e8c;
+        --dep-soft: #e7eef7;
+        --success: #2f6b4f;
+        --error: #a32a1f;
+        --error-soft: #fbeDEA;
+        --shadow: 0 18px 40px -30px rgba(30, 27, 23, 0.5);
+        --font-ui: "Instrument Sans", ui-sans-serif, -apple-system, "Segoe UI",
+          sans-serif;
+        --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas,
+          monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: var(--font-ui);
+        background:
+          radial-gradient(1200px 600px at 8% -12%, #fff9ee 0%, transparent 60%),
+          radial-gradient(900px 500px at 100% 0%, #f7e9dc 0%, transparent 52%),
+          var(--paper);
+        min-height: 100vh;
+      }
+
+      button,
+      input {
+        font: inherit;
+        color: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 24px;
+        display: grid;
+        gap: 16px;
+      }
+
+      /* Top bar */
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff8f2;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-display);
+        font-style: italic;
+        font-size: 22px;
+        letter-spacing: -0.5px;
+        box-shadow: 0 10px 22px -14px rgba(185, 80, 46, 0.9);
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 30px;
+        font-weight: 400;
+        letter-spacing: -0.6px;
+        line-height: 1;
+      }
+
+      .brand p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.2px;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 253, 248, 0.7);
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--success);
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        border-radius: 9px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        transition:
+          background 160ms ease,
+          border-color 160ms ease,
+          transform 80ms ease;
+      }
+
+      .btn:hover {
+        background: #fffaf1;
+        border-color: #d4c9b6;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff8f2;
+      }
+
+      .btn.primary:hover {
+        background: #a84626;
+        border-color: #a84626;
+      }
+
+      .btn.apply {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: #fffdf8;
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .btn.apply:hover {
+        background: #332f29;
+      }
+
+      .btn:focus-visible,
+      .chip:focus-visible,
+      .cell:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* Formula bar */
+      .formula-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+      }
+
+      .fx {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-display);
+        font-style: italic;
+        font-size: 17px;
+        flex: none;
+      }
+
+      .cell-label {
+        min-width: 54px;
+        padding: 6px 8px;
+        border-radius: 7px;
+        background: #f7f0e6;
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        flex: none;
+      }
+
+      #formulaInput {
+        flex: 1;
+        min-width: 120px;
+        border: 0;
+        background: transparent;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        padding: 8px 6px;
+      }
+
+      #formulaInput::placeholder {
+        color: #a49a8c;
+      }
+
+      #formulaInput:focus {
+        outline: none;
+      }
+
+      /* Workspace */
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .sheet-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+
+      .sheet-scroll {
+        overflow: auto;
+        max-height: 64vh;
+      }
+
+      .sheet {
+        display: grid;
+        min-width: max-content;
+        grid-auto-rows: 34px;
+        background: var(--surface);
+      }
+
+      .corner,
+      .colhead,
+      .rowhead {
+        background: var(--surface-2);
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        display: grid;
+        place-items: center;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        user-select: none;
+      }
+
+      .corner {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 4;
+      }
+
+      .colhead {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+      }
+
+      .rowhead {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+      }
+
+      .cell {
+        position: relative;
+        padding: 0 9px;
+        display: flex;
+        align-items: center;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: cell;
+        user-select: none;
+        transition:
+          background 140ms ease,
+          box-shadow 140ms ease;
+      }
+
+      .cell.num {
+        justify-content: flex-end;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .cell.bool,
+      .cell.date {
+        justify-content: flex-end;
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .cell.error {
+        color: var(--error);
+        background: var(--error-soft);
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .cell.formula::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 0;
+        height: 0;
+        border-top: 5px solid var(--accent);
+        border-left: 5px solid transparent;
+        opacity: 0.8;
+      }
+
+      .cell.selected {
+        background: var(--accent-soft);
+        box-shadow: inset 0 0 0 2px var(--accent);
+        z-index: 1;
+      }
+
+      .cell.dep {
+        background: var(--dep-soft);
+        box-shadow: inset 0 0 0 1px #a9c1db;
+      }
+
+      .cell.selected.dep {
+        background: #f6e4d8;
+        box-shadow:
+          inset 0 0 0 2px var(--accent),
+          inset 0 0 0 4px #f3c9b7;
+      }
+
+      .sheet-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 12px;
+        border-top: 1px solid var(--line);
+        background: #fbf7ef;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+
+      #status {
+        font-family: var(--font-mono);
+      }
+
+      /* Inspector */
+      .inspector {
+        display: grid;
+        gap: 12px;
+        position: sticky;
+        top: 16px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .pill {
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .facts {
+        margin: 0;
+        display: grid;
+        gap: 9px;
+      }
+
+      .facts > div {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 8px;
+        align-items: baseline;
+      }
+
+      .facts dt {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .facts dd {
+        margin: 0;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+
+      .hint {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        background: #fbf7ef;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 5px 8px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        transition:
+          background 140ms ease,
+          border-color 140ms ease;
+      }
+
+      .chip:hover {
+        background: var(--accent-soft);
+        border-color: #e4bda9;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 10px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        border: 1px solid var(--line);
+        flex: none;
+      }
+
+      .dot.formula {
+        background: var(--surface);
+        border-top: 4px solid var(--accent);
+      }
+
+      .dot.selected {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+
+      .dot.dep {
+        background: var(--dep-soft);
+        border-color: #a9c1db;
+      }
+
+      .dot.error {
+        background: var(--error-soft);
+        border-color: #e4b5ae;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translate(-50%, 14px);
+        background: var(--ink);
+        color: #fffdf8;
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-size: 12.5px;
+        box-shadow: 0 18px 40px -18px rgba(30, 27, 23, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease;
+        max-width: min(90vw, 520px);
+        text-align: center;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      @media (max-width: 1080px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        .inspector {
+          position: static;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 680px) {
+        .app {
+          padding: 14px;
+          gap: 12px;
+        }
+        .brand h1 {
+          font-size: 26px;
+        }
+        .actions {
+          width: 100%;
+        }
+        .actions .btn {
+          flex: 1;
+        }
+        .badge {
+          width: 100%;
+          justify-content: center;
+        }
+        .formula-bar {
+          flex-wrap: wrap;
+        }
+        #formulaInput {
+          order: 4;
+          flex-basis: 100%;
+          padding-left: 0;
+        }
+        .inspector {
+          grid-template-columns: 1fr;
+        }
+        .sheet-scroll {
+          max-height: 56vh;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">MS</div>
+          <div>
+            <h1>MoonSheet</h1>
+            <p>MoonBit spreadsheet core</p>
+          </div>
+        </div>
+        <div class="actions">
+          <span class="badge">JS · MoonBit core</span>
+          <button id="newBtn" class="btn" type="button">New sheet</button>
+          <button id="loadBtn" class="btn" type="button">Load CSV</button>
+          <button id="exportBtn" class="btn primary" type="button">
+            Export CSV
+          </button>
+          <input id="csvFile" type="file" accept=".csv,text/csv" hidden />
+        </div>
+      </header>
+
+      <section class="formula-bar" aria-label="Formula editor">
+        <span class="fx" aria-hidden="true">fx</span>
+        <span id="cellLabel" class="cell-label">A1</span>
+        <input
+          id="formulaInput"
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="Cell formula"
+          placeholder="=SUM(D2:D4)"
+        />
+        <button id="commitBtn" class="btn apply" type="button">Apply</button>
+      </section>
+
+      <main class="workspace">
+        <section class="sheet-card" aria-label="Spreadsheet">
+          <div class="sheet-scroll">
+            <div id="sheet" class="sheet" role="grid" aria-label="MoonSheet grid"></div>
+          </div>
+          <div class="sheet-foot">
+            <span id="status">Ready</span>
+            <span id="stats">—</span>
+          </div>
+        </section>
+
+        <aside class="inspector">
+          <div class="card">
+            <div class="card-head">
+              <h2>Cell</h2>
+              <span id="cellBadge" class="pill">A1</span>
+            </div>
+            <dl class="facts">
+              <div><dt>Value</dt><dd id="cellValue">—</dd></div>
+              <div><dt>Formula</dt><dd id="cellFormula">—</dd></div>
+              <div><dt>Depends on</dt><dd id="dependencies">—</dd></div>
+            </dl>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Engine</h2></div>
+            <dl class="facts">
+              <div><dt>Recalculations</dt><dd id="recalcCount">0</dd></div>
+              <div><dt>State</dt><dd id="engineState">idle</dd></div>
+            </dl>
+            <p class="hint">
+              Edit a cell, press Enter. Values are computed by the MoonBit core;
+              the DOM only renders.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Try</h2></div>
+            <div class="chips">
+              <button class="chip" type="button" data-formula="=SUM(D2:D4)">
+                =SUM(D2:D4)
+              </button>
+              <button class="chip" type="button" data-formula="=AVERAGE(C2:C4)">
+                =AVERAGE(C2:C4)
+              </button>
+              <button class="chip" type="button" data-formula='=IF(D8>1000,"over","ok")'>
+                =IF(D8&gt;1000,"over","ok")
+              </button>
+              <button class="chip" type="button" data-formula='=COUNTIF(C2:C4,">1")'>
+                =COUNTIF(C2:C4,"&gt;1")
+              </button>
+              <button class="chip" type="button" data-formula="=ROUND(D7,2)">
+                =ROUND(D7,2)
+              </button>
+            </div>
+          </div>
+
+          <div class="card legend" aria-label="Legend">
+            <span><i class="dot formula"></i>Formula</span>
+            <span><i class="dot selected"></i>Selected</span>
+            <span><i class="dot dep"></i>Dependency</span>
+            <span><i class="dot error"></i>Error</span>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="moonsheet.js"></script>
+  </body>
+</html>

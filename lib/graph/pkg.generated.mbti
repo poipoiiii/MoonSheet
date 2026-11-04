@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/graph"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct DependencyGraph {
+  precedents : Map[Int32, Array[Int32]]
+  dependents : Map[Int32, Array[Int32]]
+}
+pub fn DependencyGraph::add_dependency(Self, Int32, Int32) -> Unit
+pub fn DependencyGraph::dependents_of(Self, Int32) -> Array[Int32]
+pub fn DependencyGraph::new() -> Self
+pub fn DependencyGraph::precedents_of(Self, Int32) -> Array[Int32]
+pub fn DependencyGraph::topological_order(Self, Array[Int32]) -> Array[Int32]?
+
+// Type aliases
+
+// Traits

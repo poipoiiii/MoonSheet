@@ -1,0 +1,64 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/types"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Address {
+  row : Int32
+  col : Int32
+} derive(Eq, @debug.Debug)
+pub fn Address::equal(Self, Self) -> Bool
+pub fn Address::from_key(Int32) -> Self
+pub fn Address::key(Self) -> Int32
+pub fn Address::new(Int32, Int32) -> Self
+pub fn Address::not_equal(Self, Self) -> Bool
+pub fn Address::parse(String) -> Self?
+pub fn Address::to_a1(Self) -> String
+pub fn Address::to_repr(Self) -> @debug.Repr
+
+pub(all) enum CellError {
+  DivZero
+  ValueErr
+  Ref
+  Name
+  NotAvailable
+  Num
+  Circular
+} derive(Eq, @debug.Debug)
+pub fn CellError::code(Self) -> String
+pub fn CellError::equal(Self, Self) -> Bool
+pub fn CellError::not_equal(Self, Self) -> Bool
+pub fn CellError::to_repr(Self) -> @debug.Repr
+
+pub struct Range {
+  start : Address
+  end : Address
+} derive(Eq, @debug.Debug)
+pub fn Range::equal(Self, Self) -> Bool
+pub fn Range::new(Address, Address) -> Self
+pub fn Range::not_equal(Self, Self) -> Bool
+pub fn Range::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Value {
+  Number(Double)
+  Text(String)
+  Boolean(Bool)
+  Date(Int32)
+  Error(CellError)
+  Blank
+} derive(Eq, @debug.Debug)
+pub fn Value::equal(Self, Self) -> Bool
+pub fn Value::not_equal(Self, Self) -> Bool
+pub fn Value::to_display(Self) -> String
+pub fn Value::to_repr(Self) -> @debug.Repr
+
+// Type aliases
+
+// Traits

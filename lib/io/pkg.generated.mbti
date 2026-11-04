@@ -1,0 +1,51 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/io"
+
+import {
+  "moonbitlang/core/json",
+  "poipoiiii/moonsheet/lib/types",
+  "poipoiiii/moonsheet/lib/workbook",
+}
+
+// Values
+pub fn export_csv(@workbook.Sheet, Int32, Int32) -> String
+
+pub fn export_csv_auto(@workbook.Sheet) -> String
+
+pub fn export_json(@workbook.Workbook) -> String
+
+pub fn import_json(String) -> @workbook.Workbook?
+
+pub fn load_csv(@workbook.Sheet, String) -> Int32
+
+pub fn parse_cell_value(String) -> @types.Value
+
+pub fn parse_csv(String) -> Array[Array[String]]
+
+// Errors
+
+// Types and methods
+pub(all) struct CellJson {
+  formula : String?
+  kind : String
+  value : String
+} derive(ToJson, @json.FromJson)
+pub fn CellJson::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn CellJson::to_json(Self) -> Json
+
+pub(all) struct SheetJson {
+  name : String
+  cells : Map[String, CellJson]
+} derive(ToJson, @json.FromJson)
+pub fn SheetJson::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn SheetJson::to_json(Self) -> Json
+
+pub(all) struct WorkbookJson {
+  sheets : Array[SheetJson]
+} derive(ToJson, @json.FromJson)
+pub fn WorkbookJson::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn WorkbookJson::to_json(Self) -> Json
+
+// Type aliases
+
+// Traits

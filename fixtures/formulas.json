@@ -1,0 +1,27 @@
+[
+  {
+    "id": "math.sum.basic",
+    "sheet": { "A1": 1, "A2": 2, "A3": "=SUM(A1:A2)" },
+    "expect": { "A3": 3 }
+  },
+  {
+    "id": "math.precedence",
+    "sheet": { "A1": "=1+2*3" },
+    "expect": { "A1": 7 }
+  },
+  {
+    "id": "ref.chain",
+    "sheet": { "A1": 10, "A2": "=A1*2", "A3": "=SUM(A1:A2)" },
+    "expect": { "A2": 20, "A3": 30 }
+  },
+  {
+    "id": "error.divide_by_zero",
+    "sheet": { "A1": "=1/0" },
+    "expect": { "A1": "#DIV/0!" }
+  },
+  {
+    "id": "logical.if",
+    "sheet": { "A1": "=IF(1>0,10,20)" },
+    "expect": { "A1": 10 }
+  }
+]

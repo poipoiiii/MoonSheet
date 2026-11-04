@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/eval"
+
+import {
+  "poipoiiii/moonsheet/lib/formula",
+  "poipoiiii/moonsheet/lib/types",
+}
+
+// Values
+pub fn eval(@formula.Expr, EvalContext) -> @types.Value
+
+pub fn eval_formula(String, EvalContext) -> @types.Value
+
+// Errors
+
+// Types and methods
+pub struct EvalContext {
+  get_value : (@types.Address) -> @types.Value
+  get_range : (@types.Range) -> Array[@types.Value]
+}
+pub fn EvalContext::new((@types.Address) -> @types.Value, (@types.Range) -> Array[@types.Value]) -> Self
+
+// Type aliases
+
+// Traits
