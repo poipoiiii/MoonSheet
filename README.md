@@ -12,11 +12,12 @@ MoonSheet is not an Excel clone. It is the reusable calculation core that report
 - **Dependency graph** — precedents/dependents, topological order, cycle detection, and dirty-subgraph incremental recalculation.
 - **Workbook model** — sparse cells, formulas, full and incremental recalculation, A1 addressing.
 - **Named ranges** — sheet-scoped names such as `Sales = D2:D4`; `=SUM(Sales)` works in evaluation and dependency tracking.
+- **Number formats** — General, fixed decimals with thousands grouping, currency, and percent; formats survive edits and JSON round-trips.
 - **IO** — CSV import/export and a stable JSON workbook format.
 - **CLI** — `eval`, `calc`, `json`, `validate`, `stress`.
 - **Web demo** — an interactive grid with formula bar, dependency highlighting, CSV import/export, and live recalculation.
 
-The test suite has 49 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, incremental recalculation, cycles, CSV, and JSON.
+The test suite has 55 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cycles, CSV, and JSON.
 
 ## Quick start
 
@@ -87,8 +88,8 @@ After the first recalculation the dependency graph is cached. Editing a value ma
     {
       "name": "Sheet1",
       "cells": {
-        "A1": { "formula": null, "kind": "number", "value": "10" },
-        "A2": { "formula": "=A1*2", "kind": "number", "value": "20" }
+        "A1": { "formula": null, "kind": "number", "value": "10", "format": "general" },
+        "A2": { "formula": "=A1*2", "kind": "number", "value": "20", "format": "currency:¥:2" }
       }
     }
   ]
@@ -105,6 +106,7 @@ lib/formula/      lexer, Pratt parser, AST, reference collection
 lib/eval/         evaluator, coercion, IF/IFERROR, range-aware functions
 lib/functions/    value-based built-in function registry
 lib/graph/        dependency graph, topological order, cycle detection
+lib/format/       number formatting (decimals, grouping, currency, percent)
 lib/workbook/     workbook, worksheet, full/incremental recalculation
 lib/io/           CSV import/export, JSON workbook
 cmd/moonsheet/    CLI

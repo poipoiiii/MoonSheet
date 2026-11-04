@@ -475,6 +475,22 @@
         overflow-wrap: anywhere;
       }
 
+      #formatSelect {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #fbf7ef;
+        padding: 5px 7px;
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        color: var(--ink);
+      }
+
+      #formatSelect:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
       .hint {
         margin: 12px 0 0;
         color: var(--muted);
@@ -679,6 +695,17 @@
             <dl class="facts">
               <div><dt>Value</dt><dd id="cellValue">—</dd></div>
               <div><dt>Formula</dt><dd id="cellFormula">—</dd></div>
+              <div>
+                <dt>Format</dt>
+                <dd>
+                  <select id="formatSelect" aria-label="Cell format">
+                    <option value="general">General</option>
+                    <option value="number:2">Number · 2 decimals</option>
+                    <option value="currency:¥:2">Currency · ¥</option>
+                    <option value="percent:1">Percent · 1 decimal</option>
+                  </select>
+                </dd>
+              </div>
               <div><dt>Depends on</dt><dd id="dependencies">—</dd></div>
             </dl>
           </div>

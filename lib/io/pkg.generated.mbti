@@ -29,6 +29,7 @@ pub(all) struct CellJson {
   formula : String?
   kind : String
   value : String
+  format : String?
 } derive(ToJson, @json.FromJson)
 pub fn CellJson::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 pub fn CellJson::to_json(Self) -> Json

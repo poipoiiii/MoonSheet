@@ -100,6 +100,19 @@ pub extern "js" fn js_set_dependencies(text : String) -> Unit =
   #| }
 
 ///|
+pub extern "js" fn js_set_format(selected : String) -> Unit =
+  #| function(selected) {
+  #|   const el = document.getElementById('formatSelect');
+  #|   if (el) el.value = selected;
+  #| }
+
+///|
+pub extern "js" fn js_set_on_format(cb : (String) -> Unit) -> Unit =
+  #| function(cb) {
+  #|   (globalThis.__ms = globalThis.__ms || {}).onFormat = cb;
+  #| }
+
+///|
 pub extern "js" fn js_set_cell_details(
   value : String,
   formula : String,
@@ -187,6 +200,12 @@ pub extern "js" fn js_bind_actions(
   #|       };
   #|       reader.readAsText(picked);
   #|       e.target.value = '';
+  #|     });
+  #|   }
+  #|   const format = document.getElementById('formatSelect');
+  #|   if (format) {
+  #|     format.addEventListener('change', () => {
+  #|       if (g.onFormat) g.onFormat(format.value);
   #|     });
   #|   }
   #|   document.querySelectorAll('.chip[data-formula]').forEach((chip) => {

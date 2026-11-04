@@ -83,7 +83,7 @@ MoonBit 生态已经有不少相邻能力：
 | M1 | 公式前端 | Lexer、Parser、AST、公式序列化、解析错误定位 |
 | M2 | 求值核心 | 值模型、类型强转、引用/区域求值、错误传播、基础函数 |
 | M3 | 依赖图 | 双向依赖、拓扑重算、循环检测、增量 vs 全量一致性 |
-| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、49 项测试 |
+| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、数字格式、55 项测试 |
 | M5 | IO 与工具 | CSV/JSON、CLI、示例（xlsx 作为后续适配层） |
 | M6 | 展示与硬化 | Web 网格、文档、CI 全绿、mooncakes 0.1.0 |
 
@@ -95,13 +95,14 @@ MoonBit 生态已经有不少相邻能力：
 MoonSheet/
 ├── moon.mod
 ├── lib/
-│   ├── types/        # Value / CellError / Address / Range / Cell
-│   ├── formula/      # lexer / parser / AST / printer
-│   ├── eval/         # evaluator / coercion / function registry
+│   ├── types/        # Value / CellError / CellFormat / Address / Range
+│   ├── formula/      # lexer / parser / AST / reference collection
+│   ├── eval/         # evaluator / coercion / control flow / range functions
 │   ├── functions/    # math / text / logical / lookup / date / financial / stats
 │   ├── graph/        # dependency graph / topo sort / cycle detection
-│   ├── workbook/     # workbook / worksheet / named ranges / recalc
-│   └── io/           # CSV / JSON / XLSX subset
+│   ├── format/       # number formatting (decimals / grouping / currency / percent)
+│   ├── workbook/     # workbook / worksheet / named ranges / recalc / formats
+│   └── io/           # CSV / JSON
 ├── cmd/moonsheet/    # CLI
 ├── web/              # MoonBit + JS FFI 网格
 ├── fixtures/         # 公式一致性语料、样例工作簿
@@ -307,7 +308,7 @@ moon run cmd/moonsheet -- bench --cells 10000
 | 层级 | 内容 | 目标 |
 |---|---|---|
 | 单元测试 | lexer / parser / AST printer / 强转 / 单函数 | 每个模块可独立验证 |
-| 一致性测试 | 公式用例表（当前 49 个测试，含跨模块一致性） | 与参考语义一致 |
+| 一致性测试 | 公式用例表（当前 55 个测试，含跨模块一致性） | 与参考语义一致 |
 | 图测试 | 依赖边、拓扑序、循环、区域索引 | 重算正确性 |
 | 属性测试 | 增量 == 全量；重算顺序无关；IO round-trip | 已覆盖主要路径，后续扩展随机化 |
 | Fuzz / 基准 | 随机公式、随机编辑序列、1k/10k/100k 单元格 | 后续增强 |
@@ -414,12 +415,13 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、观察�
 | `eval` | 555 | 求值、强转、错误、控制流、范围函数 |
 | `functions` | 1,337 | 55+ 函数与边界 |
 | `graph` | 138 | 依赖图、拓扑、循环 |
-| `workbook` | 385 | 工作簿、重算编排、增量路径 |
-| `io` | 266 | CSV/JSON |
+| `format` | 约 100 | 数字格式：千分位、货币、百分比 |
+| `workbook` | 450 | 工作簿、重算编排、增量路径、命名区域、格式 |
+| `io` | 280 | CSV/JSON |
 | `cmd` | 152 | CLI |
-| `web` | 425 | JS FFI、网格交互 |
-| 测试 | 约 500 | 49 个单元/一致性测试 |
-| **合计** | **约 4.4k** | 另有 HTML/CSS/JS 演示层 |
+| `web` | 450 | JS FFI、网格交互、格式选择 |
+| 测试 | 约 560 | 55 个单元/一致性测试 |
+| **合计** | **约 4.6k** | 另有 HTML/CSS/JS 演示层 |
 
 符合赛事“4–10k 有效代码”的参考区间。函数库、XLSX 适配层、随机化属性测试和基准测试保留了明确的扩展点。
 

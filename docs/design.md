@@ -107,13 +107,25 @@ The full path is always available as a correctness baseline. Tests compare value
 
 This split keeps `functions` simple and avoids giving it a dependency on the workbook.
 
-## 8. IO boundaries
+## 8. Number formats
+
+Number formatting is a display concern and is isolated in `lib/format`:
+
+- `CellFormat` is `General`, `Number(decimals)`, `Currency(symbol, decimals)`, or `Percent(decimals)`.
+- `Cell` stores a format alongside its formula and value.
+- `Sheet::set_value` and `set_formula` preserve the existing format, so editing a cell does not reset its presentation.
+- `Sheet::display_value` formats a value for rendering; `Sheet::get_value` keeps returning raw values for calculation and export.
+- JSON stores `format` as a stable code such as `number:2` or `currency:¥:2`.
+
+This keeps formatting out of the evaluator: formula semantics never depend on how a cell is displayed.
+
+## 9. IO boundaries
 
 - CSV: comma-separated, one row per line; export quotes commas, quotes, and newlines.
-- JSON: explicit `{ formula, kind, value }` per cell. `kind` preserves the type of non-formula cells; formulas are recalculated on import.
+- JSON: explicit `{ formula, kind, value, format }` per cell. `kind` preserves the type of non-formula cells, `format` preserves presentation, and formulas are recalculated on import.
 - XLSX: not in 0.1.0. A future adapter should reuse an existing xlsx reader and call `Sheet::set_value` / `Sheet::set_formula`.
 
-## 9. Testing strategy
+## 10. Testing strategy
 
 | Layer | What is tested |
 |---|---|
@@ -122,18 +134,19 @@ This split keeps `functions` simple and avoids giving it a dependency on the wor
 | `eval` | arithmetic, errors, lazy `IF`, range functions |
 | `functions` | math, text, dates, statistics |
 | `graph` | dependents, topological order, cycles |
-| `workbook` | chains, incremental edits, cycles, formula preservation, conformance table |
+| `format` | grouping, decimals, currency, percent, non-numeric fallback |
+| `workbook` | chains, incremental edits, cycles, named ranges, formats, conformance table |
 | `io` | CSV import/export, JSON round-trip |
 
 Conformance checks go through `Sheet::recalculate`, so they exercise the same path a user sees rather than calling functions in isolation.
 
-## 10. Known limits
+## 11. Known limits
 
 - Named ranges are sheet-scoped; workbook-global names and cross-sheet references (`Sheet2!A1`) are not implemented yet.
 - Cycle handling is sheet-wide (`#CIRC!` for all formula cells) rather than per strongly connected component.
 - Iterative calculation is not implemented.
 - Ranges over 10,000 cells are not expanded into graph edges.
 - XLSX is deferred.
-- Styles, number formats, charts, and collaboration are out of scope.
+- Cell styles (fonts, colors, alignment), charts, and collaboration are out of scope.
 
 These limits are deliberate: the product is the calculation core, and each limit has a clear extension point.

@@ -14,6 +14,7 @@ import {
 pub struct Cell {
   formula : String?
   value : @types.Value
+  format : @types.CellFormat
 }
 
 pub struct Sheet {
@@ -27,7 +28,9 @@ pub struct Sheet {
 }
 pub fn Sheet::define_name(Self, String, String) -> Bool
 pub fn Sheet::dependencies(Self, String) -> Array[String]
+pub fn Sheet::display_value(Self, String) -> String
 pub fn Sheet::entries(Self) -> Array[(String, String?, @types.Value)]
+pub fn Sheet::get_format(Self, String) -> @types.CellFormat
 pub fn Sheet::get_formula(Self, String) -> String?
 pub fn Sheet::get_value(Self, String) -> @types.Value
 pub fn Sheet::name_list(Self) -> Array[String]
@@ -37,6 +40,7 @@ pub fn Sheet::recalculate(Self) -> Int32
 pub fn Sheet::recalculate_dirty(Self) -> Int32
 pub fn Sheet::recalculate_full(Self) -> Int32
 pub fn Sheet::remove_name(Self, String) -> Bool
+pub fn Sheet::set_format(Self, String, @types.CellFormat) -> Bool
 pub fn Sheet::set_formula(Self, String, String) -> Bool
 pub fn Sheet::set_value(Self, String, @types.Value) -> Bool
 pub fn Sheet::value_at(Self, @types.Address) -> @types.Value

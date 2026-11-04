@@ -39,6 +39,16 @@ test "range parse" {
 }
 
 ///|
+test "cell format code round-trips" {
+  assert_eq(CellFormat::Number(2).code(), "number:2")
+  assert_eq(CellFormat::parse("number:2"), CellFormat::Number(2))
+  assert_eq(CellFormat::Currency("¥", 2).code(), "currency:¥:2")
+  assert_eq(CellFormat::parse("currency:¥:2"), CellFormat::Currency("¥", 2))
+  assert_eq(CellFormat::parse("percent:1"), CellFormat::Percent(1))
+  assert_eq(CellFormat::parse("nope"), CellFormat::General)
+}
+
+///|
 test "cell error codes" {
   assert_eq(CellError::DivZero.code(), "#DIV/0!")
   assert_eq(CellError::Name.code(), "#NAME?")

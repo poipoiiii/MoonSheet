@@ -3,5 +3,6 @@ import {
   "poipoiiii/moonsheet/lib/formula",
   "poipoiiii/moonsheet/lib/eval",
   "poipoiiii/moonsheet/lib/graph",
+  "poipoiiii/moonsheet/lib/format",
   "moonbitlang/core/builtin",
 }

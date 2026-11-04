@@ -69,6 +69,17 @@ test "single-cell named range works as a scalar" {
 }
 
 ///|
+test "number formats persist through value edits" {
+  let workbook = Workbook::new()
+  let sheet = workbook.add_sheet("Sheet1")
+  ignore(sheet.set_value("A1", @types.Value::Number(1234.5)))
+  assert_true(sheet.set_format("A1", @types.CellFormat::Number(2)))
+  assert_eq(sheet.display_value("A1"), "1,234.50")
+  ignore(sheet.set_value("A1", @types.Value::Number(2000.0)))
+  assert_eq(sheet.display_value("A1"), "2,000.00")
+}
+
+///|
 test "invalid address is rejected" {
   let workbook = Workbook::new()
   let sheet = workbook.add_sheet("Sheet1")

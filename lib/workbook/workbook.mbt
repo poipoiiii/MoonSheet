@@ -8,6 +8,7 @@
 pub struct Cell {
   formula : String?
   value : @types.Value
+  format : @types.CellFormat
 }
 
 ///|
@@ -103,7 +104,11 @@ pub fn Sheet::set_value(
         Some(cell) => cell.formula is Some(_)
         None => false
       }
-      self.cells[key] = { formula: None, value, }
+      let existing_format = match self.cells.get(key) {
+        Some(cell) => cell.format
+        None => @types.CellFormat::General
+      }
+      self.cells[key] = { formula: None, value, format: existing_format, }
       if had_formula {
         self.graph_valid = false
         self.full_recalc = true
@@ -120,9 +125,15 @@ pub fn Sheet::set_value(
 pub fn Sheet::set_formula(self : Sheet, a1 : String, formula : String) -> Bool {
   match @types.Address::parse(a1) {
     Some(addr) => {
-      self.cells[addr.key()] = {
+      let key = addr.key()
+      let existing_format = match self.cells.get(key) {
+        Some(cell) => cell.format
+        None => @types.CellFormat::General
+      }
+      self.cells[key] = {
         formula: Some(formula),
         value: @types.Value::Blank,
+        format: existing_format,
       }
       self.graph_valid = false
       self.full_recalc = true
@@ -146,6 +157,53 @@ pub fn Sheet::get_value(self : Sheet, a1 : String) -> @types.Value {
     Some(addr) => self.value_at(addr)
     None => @types.Value::Error(@types.CellError::Ref)
   }
+}
+
+///|
+pub fn Sheet::set_format(
+  self : Sheet,
+  a1 : String,
+  format : @types.CellFormat,
+) -> Bool {
+  match @types.Address::parse(a1) {
+    Some(addr) => {
+      let key = addr.key()
+      match self.cells.get(key) {
+        Some(cell) =>
+          self.cells[key] = {
+            formula: cell.formula,
+            value: cell.value,
+            format,
+          }
+        None =>
+          self.cells[key] = {
+            formula: None,
+            value: @types.Value::Blank,
+            format,
+          }
+      }
+      true
+    }
+    None => false
+  }
+}
+
+///|
+pub fn Sheet::get_format(self : Sheet, a1 : String) -> @types.CellFormat {
+  match @types.Address::parse(a1) {
+    Some(addr) =>
+      match self.cells.get(addr.key()) {
+        Some(cell) => cell.format
+        None => @types.CellFormat::General
+      }
+    None => @types.CellFormat::General
+  }
+}
+
+///|
+/// Format a cell value for display. Raw values stay unchanged for calculation.
+pub fn Sheet::display_value(self : Sheet, a1 : String) -> String {
+  @format.format_value(self.get_value(a1), self.get_format(a1))
 }
 
 ///|
@@ -324,7 +382,12 @@ fn Sheet::write_formula_value(
   match self.cells.get(key) {
     Some(cell) =>
       match cell.formula {
-        Some(formula) => self.cells[key] = { formula: Some(formula), value, }
+        Some(formula) =>
+          self.cells[key] = {
+            formula: Some(formula),
+            value,
+            format: cell.format,
+          }
         None => ()
       }
     None => ()
@@ -459,7 +522,11 @@ pub fn Sheet::recalculate_dirty(self : Sheet) -> Int32 {
               Some(text) => {
                 let value = eval_formula_text(text, values, self.names)
                 values[key] = value
-                self.cells[key] = { formula: Some(text), value, }
+                self.cells[key] = {
+                  formula: Some(text),
+                  value,
+                  format: cell.format,
+                }
               }
               None => ()
             }

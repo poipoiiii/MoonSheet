@@ -13,6 +13,7 @@ pub(all) struct CellJson {
   formula : String?
   kind : String
   value : String
+  format : String?
 } derive(@json.ToJson, @json.FromJson)
 
 ///|
@@ -101,6 +102,7 @@ pub fn export_json(workbook : @workbook.Workbook) -> String {
             formula,
             kind: kind_of(value),
             value: value.to_display(),
+            format: Some(sheet.get_format(a1).code()),
           }
         }
         sheets.push({ name, cells, })
@@ -121,7 +123,7 @@ pub fn import_json(text : String) -> @workbook.Workbook? {
     let sheet = workbook.add_sheet(sheet_json.name)
     for a1 in sheet_json.cells.keys() {
       match sheet_json.cells.get(a1) {
-        Some(cell) =>
+        Some(cell) => {
           match cell.formula {
             Some(formula) => ignore(sheet.set_formula(a1, formula))
             None =>
@@ -129,6 +131,12 @@ pub fn import_json(text : String) -> @workbook.Workbook? {
                 sheet.set_value(a1, value_from_kind(cell.kind, cell.value)),
               )
           }
+          match cell.format {
+            Some(code) =>
+              ignore(sheet.set_format(a1, @types.CellFormat::parse(code)))
+            None => ()
+          }
+        }
         None => ()
       }
     }

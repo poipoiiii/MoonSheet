@@ -54,6 +54,47 @@ pub extend Value with Eq::{not_equal, equal}
 pub extend Value with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
+/// Display format for a number cell.
+pub(all) enum CellFormat {
+  General
+  Number(Int32)
+  Currency(String, Int32)
+  Percent(Int32)
+} derive(Eq, Debug)
+
+///|
+pub extend CellFormat with Eq::{not_equal, equal}
+
+///|
+pub extend CellFormat with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub fn CellFormat::code(self : CellFormat) -> String {
+  match self {
+    General => "general"
+    Number(decimals) => "number:\{decimals}"
+    Currency(symbol, decimals) => "currency:\{symbol}:\{decimals}"
+    Percent(decimals) => "percent:\{decimals}"
+  }
+}
+
+///|
+pub fn CellFormat::parse(code : String) -> CellFormat {
+  let parts = code.split(":").to_array()
+  if parts.length() == 1 && parts[0].to_owned() == "general" {
+    General
+  } else if parts.length() == 2 && parts[0].to_owned() == "number" {
+    Number(@string.parse_int(parts[1]) catch { _ => 2 })
+  } else if parts.length() == 3 && parts[0].to_owned() == "currency" {
+    Currency(parts[1].to_owned(), @string.parse_int(parts[2]) catch { _ => 2 })
+  } else if parts.length() == 2 && parts[0].to_owned() == "percent" {
+    Percent(@string.parse_int(parts[1]) catch { _ => 1 })
+  } else {
+    General
+  }
+}
+
+///|
 /// Render a value for the CLI and CSV export.
 pub fn Value::to_display(self : Value) -> String {
   match self {

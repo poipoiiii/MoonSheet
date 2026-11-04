@@ -41,6 +41,12 @@ fn make_sample_sheet() -> @workbook.Sheet {
   ignore(sheet.set_formula("D4", "=B4*C4"))
   ignore(sheet.set_value("E4", @types.Value::Text("monthly")))
 
+  ignore(sheet.set_format("C2", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("C3", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("C4", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("D2", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("D3", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("D4", @types.CellFormat::Currency("¥", 2)))
   ignore(sheet.define_name("Sales", "D2:D4"))
   ignore(sheet.set_value("A6", @types.Value::Text("Subtotal")))
   ignore(sheet.set_formula("D6", "=SUM(Sales)"))
@@ -53,6 +59,9 @@ fn make_sample_sheet() -> @workbook.Sheet {
   ignore(sheet.set_value("A8", @types.Value::Text("Grand total")))
   ignore(sheet.set_formula("D8", "=D6+D7"))
   ignore(sheet.set_formula("E8", "=ROUND(D8,2)"))
+  ignore(sheet.set_format("D6", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("D7", @types.CellFormat::Currency("¥", 2)))
+  ignore(sheet.set_format("D8", @types.CellFormat::Currency("¥", 2)))
   ignore(sheet.recalculate())
   sheet
 }
@@ -116,10 +125,7 @@ fn App::render(self : App) -> Unit {
         Some(text) => text
         None => ""
       }
-      let text = match value {
-        @types.Value::Blank => ""
-        _ => value.to_display()
-      }
+      let text = self.sheet.display_value(a1)
       let dependency = dep_map.get(a1) is Some(_)
       let is_selected = row == self.selected_row && col == self.selected_col
       js_render_cell(
@@ -148,7 +154,8 @@ fn App::render(self : App) -> Unit {
   js_set_formula(bar)
   js_set_selected_label(selected)
   js_set_dependencies(join(dependencies, ", "))
-  js_set_cell_details(selected_value.to_display(), selected_formula)
+  js_set_cell_details(self.sheet.display_value(selected), selected_formula)
+  js_set_format(self.sheet.get_format(selected).code())
   js_set_status("Ready · click a cell, edit the formula bar, press Enter")
   js_set_engine_state("ready")
   js_set_recalc_count(self.recalc_count)
@@ -171,6 +178,14 @@ fn App::select(self : App, row : Int32, col : Int32) -> Unit {
     self.selected_col = col
     self.render()
   }
+}
+
+///|
+fn App::set_format(self : App, code : String) -> Unit {
+  let a1 = @types.Address::new(self.selected_row, self.selected_col).to_a1()
+  ignore(self.sheet.set_format(a1, @types.CellFormat::parse(code)))
+  self.render()
+  js_toast("Format updated")
 }
 
 ///|
@@ -226,6 +241,7 @@ fn main {
   js_set_on_cell(fn(row, col) { app.select(row, col) })
   js_set_on_commit(fn(text) { app.commit(text) })
   js_set_on_csv(fn(text) { app.load_csv(text) })
+  js_set_on_format(fn(code) { app.set_format(code) })
   js_bind_actions(fn() { app.reset() }, fn() { app.export_csv() })
   app.render()
 }

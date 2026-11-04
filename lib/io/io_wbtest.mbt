@@ -48,3 +48,26 @@ test "json round trip" {
     None => assert_true(false)
   }
 }
+
+///|
+test "json preserves number formats" {
+  let workbook = @workbook.Workbook::new()
+  let sheet = workbook.add_sheet("Sheet1")
+  ignore(sheet.set_value("A1", @types.Value::Number(1234.5)))
+  ignore(sheet.set_format("A1", @types.CellFormat::Currency("¥", 2)))
+  let text = export_json(workbook)
+  match import_json(text) {
+    Some(restored) =>
+      match restored.sheet("Sheet1") {
+        Some(restored_sheet) => {
+          assert_eq(
+            restored_sheet.get_format("A1"),
+            @types.CellFormat::Currency("¥", 2),
+          )
+          assert_eq(restored_sheet.display_value("A1"), "¥1,234.50")
+        }
+        None => assert_true(false)
+      }
+    None => assert_true(false)
+  }
+}
