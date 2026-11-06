@@ -1,6 +1,7 @@
 # MoonSheet：MoonBit 表格计算内核
 
-> 申报书级方案 · v0.1
+> 申报书级方案 · v0.2
+> 代码仓库：https://github.com/poipoiiii/MoonSheet
 
 ## 0. 一句话定位
 
@@ -47,7 +48,7 @@ MoonBit 生态已经有不少相邻能力：
 2. **公式语言**
    - Lexer + Pratt parser + AST。
    - 数字、字符串、布尔、错误字面量、函数调用、区域、括号、一元/二元运算。
-   - 运算符优先级与结合性；引用解析；公式序列化回文本。
+   - 运算符优先级与结合性；引用解析。公式序列化回文本列为后续增强（见 §14）。
 3. **计算引擎**
    - 值类型：Number / Text / Boolean / Date / Error / Blank。
    - Excel 风格类型强转与错误传播（`#DIV/0!`、`#VALUE!`、`#REF!`、`#NAME?`、`#N/A`、`#NUM!`、`#CIRC!`）。
@@ -57,7 +58,7 @@ MoonBit 生态已经有不少相邻能力：
    - Precedent / dependent 双向边；区域依赖索引。
    - 全量重算作为正确性基线；增量重算作为性能路径。
    - 拓扑排序、dirty 子图传播、循环引用检测。
-   - Debug 模式强制比对“增量结果 == 全量结果”。
+   - Debug 模式强制比对“增量结果 == 全量结果”（当前由测试覆盖，见 §7）。
 5. **互操作**
    - CSV 导入导出，包含引号转义。
    - 类型保持的 JSON 工作簿导入导出（formula / kind / value）。
@@ -83,7 +84,7 @@ MoonBit 生态已经有不少相邻能力：
 | M1 | 公式前端 | Lexer、Parser、AST、公式序列化、解析错误定位 |
 | M2 | 求值核心 | 值模型、类型强转、引用/区域求值、错误传播、基础函数 |
 | M3 | 依赖图 | 双向依赖、拓扑重算、循环检测、增量 vs 全量一致性 |
-| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、数字格式、55 项测试 |
+| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、数字格式、跨表引用、67 项测试 |
 | M5 | IO 与工具 | CSV/JSON、CLI、示例（xlsx 作为后续适配层） |
 | M6 | 展示与硬化 | Web 网格、文档、CI 全绿、mooncakes 0.1.0 |
 
@@ -205,7 +206,7 @@ pub enum Expr {
 
 - Pratt parser，优先级表显式定义。
 - 错误恢复：记录首个错误位置与期望 token，返回可读诊断。
-- 公式打印器保证 `parse(print(ast)) == ast`，用于 round-trip 测试。
+- 公式打印器（后续）保证 `parse(print(ast)) == ast`，用于 round-trip 测试。
 - 引用解析与求值分离：解析阶段只产出地址/区域，求值阶段再访问工作簿。
 
 ### 5.3 依赖图与重算
@@ -213,7 +214,7 @@ pub enum Expr {
 - 每个公式单元格记录两类边：
   - `precedents`：它依赖谁（单元格或区域）。
   - `dependents`：谁依赖它。
-- 区域依赖使用**区域索引**，避免把 `A1:A100000` 展开成十万条边。
+- 区域依赖：当前把 ≤10,000 格的区域展开为单元格边，更大的区域不建边（求值时仍计算）；后续用区域索引按行/列分桶，避免 `A1:A100000` 展开成十万条边。
 - 修改单元格后：
   1. 标记自身与传递 dependents 为 dirty。
   2. 对 dirty 子图做拓扑排序。
@@ -226,12 +227,11 @@ pub enum Expr {
 按类别注册，统一签名与错误约定：
 
 ```moonbit
-pub struct FunctionSpec {
-  name : String
-  min_args : Int
-  max_args : Int
-  eval : (Array[Value]) -> Value
-}
+// lib/functions：名称 -> 值求值
+pub fn call(name : String, args : Array[Value]) -> Value?
+
+// lib/eval：需要范围形状或惰性求值的函数单独处理
+// IF / IFERROR / COUNTIF / SUMIF / AVERAGEIF / INDEX / MATCH / VLOOKUP
 ```
 
 首批函数（按优先级）：
@@ -251,7 +251,7 @@ pub struct FunctionSpec {
 ### 5.5 性能策略
 
 - 稀疏单元格：只存有值/公式的格子。
-- 区域索引：按工作表 + 行列范围建索引，避免区域依赖全展开。
+- 区域索引：按工作表 + 行列范围建索引，避免区域依赖全展开（当前为展开上限 10,000 格的过渡方案）。
 - 增量重算：dirty 子图 + 拓扑序。
 - 基准场景：1k / 10k / 100k 单元格；宽表与深链两种形态。
 - 基准输出：重算耗时、访问节点数、依赖边数，便于回归对比。
@@ -271,34 +271,36 @@ pub struct FunctionSpec {
 let wb = @workbook.Workbook::new()
 let sheet = wb.add_sheet("Sheet1")
 
-sheet.set("A1", @types.Value::Number(10.0))
+sheet.set_value("A1", @types.Value::Number(10.0))
 sheet.set_formula("A2", "=A1 * 2")
 sheet.set_formula("A3", "=SUM(A1:A2)")
 
-let value = sheet.get_value("A3")   // Number(30.0)
-let formula = sheet.get_formula("A3") // "=SUM(A1:A2)"
+let summary = wb.add_sheet("Summary")
+summary.set_formula("B1", "=Sheet1!A3")
 
-match sheet.recalculate() {
-  Ok(stats) => println("recalculated: \{stats.cells}")
-  Err(errors) => println("errors: \{errors.length()}")
-}
+ignore(wb.recalculate_all())            // 跨表按依赖顺序重算
+
+let value = sheet.get_value("A3")       // Number(30.0)
+let formula = sheet.get_formula("A3")   // Some("=SUM(A1:A2)")
 ```
+
+单表路径用 `sheet.recalculate()`：首次全量建图，之后按 dirty 子图增量重算。
 
 ### 6.2 CLI
 
 ```bash
 moon run cmd/moonsheet -- eval "=SUM(1,2,3)"          # 6
-moon run cmd/moonsheet -- calc fixtures/budget.csv     # 计算结果
+moon run cmd/moonsheet -- calc "10,20\n=A1+B1,30"     # 重算后输出 CSV
 moon run cmd/moonsheet -- validate fixtures/formulas.json
-moon run cmd/moonsheet -- bench --cells 10000
+moon run cmd/moonsheet -- stress 1000
 ```
 
 ### 6.3 Web
 
-- 网格渲染、单元格编辑、公式栏。
-- 选中单元格时高亮其 precedents / dependents。
+- 网格渲染、单元格编辑、公式栏、工作表标签切换与新增工作表。
+- 选中单元格时高亮其 precedents / dependents；跨表依赖显示为 `Budget!D8`。
 - 错误单元格显示错误码与简短原因；循环引用单独标色。
-- 导入 CSV / JSON，导出结果；可分享一个包含公式的示例工作簿。
+- 导入 CSV、导出当前工作表；内置 `Budget` / `Summary` 两个工作表的跨表示例。
 - 复用 chess web 的 JS FFI + 静态服务器模式，保持构建简单。
 
 ## 7. 测试与验收
@@ -308,8 +310,8 @@ moon run cmd/moonsheet -- bench --cells 10000
 | 层级 | 内容 | 目标 |
 |---|---|---|
 | 单元测试 | lexer / parser / AST printer / 强转 / 单函数 | 每个模块可独立验证 |
-| 一致性测试 | 公式用例表（当前 55 个测试，含跨模块一致性） | 与参考语义一致 |
-| 图测试 | 依赖边、拓扑序、循环、区域索引 | 重算正确性 |
+| 一致性测试 | 公式用例表（当前 67 个测试，含跨模块一致性） | 与参考语义一致 |
+| 图测试 | 依赖边、拓扑序、循环、区域索引、跨表依赖顺序 | 重算正确性 |
 | 属性测试 | 增量 == 全量；重算顺序无关；IO round-trip | 已覆盖主要路径，后续扩展随机化 |
 | Fuzz / 基准 | 随机公式、随机编辑序列、1k/10k/100k 单元格 | 后续增强 |
 
@@ -339,25 +341,29 @@ moon run cmd/moonsheet -- bench --cells 10000
 ```bash
 moon check --target native
 moon test --target native
-moon fmt --check
+moon fmt
 moon info
 
 moon run cmd/moonsheet -- eval "=SUM(1,2,3)"
-moon run cmd/moonsheet -- calc fixtures/budget.csv
-moon run cmd/moonsheet -- bench --cells 10000
+moon run cmd/moonsheet -- calc "10,20\n=A1+B1,30"
+moon run cmd/moonsheet -- stress 1000
+
+powershell -ExecutionPolicy Bypass -File web/build.ps1
+python -m http.server 8000 --directory web
 ```
 
-Web 演示通过静态服务器打开，点击单元格、输入公式、观察重算与依赖高亮。
+本机没有 MSVC 时，用 `--target wasm` 执行同等的 check / test（CI 同时覆盖 native 与 wasm）。
+Web 演示通过静态服务器打开，点击单元格、输入公式、切换工作表，观察重算与依赖高亮。
 
 ### 7.4 验收标准
 
-- [ ] 核心库在 native / wasm / js 三后端可编译（至少 native + js 有 CI 覆盖）。
-- [ ] 公式解析、求值、依赖图、重算、循环检测全部有测试。
-- [ ] 500+ 一致性用例通过；错误码与边界行为有文档。
-- [ ] 增量重算与全量重算在测试中逐格一致。
-- [ ] CLI 与 Web demo 可按文档一键复现。
-- [ ] `mooncakes.io` 发布 0.1.0；README / design / CHANGELOG 完整。
-- [ ] CI 通过 `check` / `test` / `fmt` / `info`。
+- [x] 核心库在 native / wasm / js 三后端可编译（CI 覆盖 native + wasm）。
+- [x] 公式解析、求值、依赖图、重算、循环检测全部有测试。
+- [ ] 500+ 一致性用例；错误码与边界行为有文档（当前 67 个测试，语料持续扩充）。
+- [x] 增量重算与全量重算在测试中逐格一致。
+- [x] CLI 与 Web demo 可按文档一键复现。
+- [ ] `mooncakes.io` 发布 0.1.0（README / design / CHANGELOG 已完整）。
+- [x] CI 通过 `check` / `test` / `fmt` / `info`。
 
 ## 8. 里程碑与交付物
 
@@ -395,12 +401,12 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、观察�
 
 ## 11. 参赛材料清单
 
-- [ ] `README.md`：30 秒定位、架构图、快速开始、演示截图、验收命令。
-- [ ] `docs/proposal.md`：本方案。
-- [ ] `docs/design.md`：数据模型、求值语义、依赖图与重算设计取舍。
-- [ ] `LICENSE`：MIT。
-- [ ] `CHANGELOG.md`。
-- [ ] `.github/workflows/check.yml`：三平台 `check` / `test` / `fmt` / `info`。
+- [x] `README.md`：30 秒定位、架构图、快速开始、演示截图、验收命令。
+- [x] `docs/proposal.md`：本方案。
+- [x] `docs/design.md`：数据模型、求值语义、依赖图与重算设计取舍。
+- [x] `LICENSE`：MIT。
+- [x] `CHANGELOG.md`。
+- [x] `.github/workflows/check.yml`：三平台 `check` / `test` / `fmt` / `info`。
 - [ ] `mooncakes.io` 0.1.0 发布。
 - [ ] Web demo 与 GIF/视频。
 - [ ] 开发历程文章：AI 工具使用、参考实现取舍、踩坑与复盘。
@@ -410,31 +416,58 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、观察�
 
 | 包 | 实际 MoonBit 行数 | 说明 |
 |---|---:|---|
-| `types` | 161 | 值、错误、地址、区域 |
-| `formula` | 578 | lexer、parser、AST、引用收集 |
-| `eval` | 555 | 求值、强转、错误、控制流、范围函数 |
+| `types` | 216 | 值、错误、地址、区域 |
+| `formula` | 695 | lexer、parser、AST、引用收集 |
+| `eval` | 639 | 求值、强转、错误、控制流、范围函数 |
 | `functions` | 1,337 | 55+ 函数与边界 |
 | `graph` | 138 | 依赖图、拓扑、循环 |
-| `format` | 约 100 | 数字格式：千分位、货币、百分比 |
-| `workbook` | 450 | 工作簿、重算编排、增量路径、命名区域、格式 |
-| `io` | 280 | CSV/JSON |
+| `format` | 75 | 数字格式：千分位、货币、百分比 |
+| `workbook` | 843 | 工作簿、表级依赖排序、增量路径、命名区域、跨表引用 |
+| `io` | 274 | CSV/JSON |
 | `cmd` | 152 | CLI |
-| `web` | 450 | JS FFI、网格交互、格式选择 |
-| 测试 | 约 560 | 55 个单元/一致性测试 |
-| **合计** | **约 4.6k** | 另有 HTML/CSS/JS 演示层 |
+| `web` | 546 | JS FFI、网格交互、工作表标签 |
+| 测试 | 788 | 67 个单元/一致性测试 |
+| **合计** | **约 5.7k** | 另有 HTML/CSS/JS 演示层 |
 
 符合赛事“4–10k 有效代码”的参考区间。函数库、XLSX 适配层、随机化属性测试和基准测试保留了明确的扩展点。
 
-## 13. 首批任务
+## 13. 首批任务（已完成）
 
 1. 建立 `moon.mod`、`lib/*` 包骨架、`.github/workflows/check.yml`。
 2. 定义 `Value` / `CellError` / `Address` / `Range`，补齐单元测试。
-3. 实现 lexer + Pratt parser + AST printer，建立解析用例。
+3. 实现 lexer + Pratt parser，建立解析用例。
 4. 实现算术/比较/引用/区域求值，跑通 `=SUM(A1:A3)` 最小闭环。
-5. 建立依赖图与全量重算，先不做增量。
-6. 加增量重算 + 循环检测，并在测试中比对全量结果。
-7. 接入 CLI `eval` / `calc`，用 `fixtures/budget.csv` 做端到端示例。
-8. 再按 Tier 扩函数库、IO 与 Web 网格。
+5. 建立依赖图与全量重算，再加增量重算与循环检测。
+6. 接入 CLI `eval` / `calc`，用内联 CSV 做端到端示例。
+7. 扩展函数库、数字格式、命名区域、跨表引用、CSV/JSON 与 Web 网格。
+
+## 14. 当前进展
+
+已完成 M0–M6：
+
+- **公式前端**：Pratt parser、AST、引用收集；`Sheet!A1` / `Sheet!A1:B2` 跨表引用；大小写不敏感的表名。
+- **求值**：值模型与错误传播、惰性 `IF` / `IFERROR`、55+ 函数、命名区域、数字格式、`COUNTIF` / `SUMIF` / `INDEX` / `MATCH` / `VLOOKUP` 等范围函数。
+- **重算**：单表 dirty 子图增量重算；工作簿级按表依赖拓扑排序，上游改动自动驱动下游重算，跨表循环标记 `#CIRC!`。
+- **互操作**：CSV 导入导出、类型保持的 JSON 工作簿；CLI `eval` / `calc` / `json` / `validate` / `stress`。
+- **展示**：Web 网格含工作表标签、新增工作表、公式栏、依赖高亮、CSV 导入导出与错误着色。
+- **质量**：67 个测试；native / wasm / js 三端 `check` 0 错误 0 警告；GitHub Actions 三平台 CI。
+
+本地验收结果：
+
+```text
+moon test --target wasm            -> 67 passed / 0 failed
+moon check --target native|wasm|js -> 0 errors, 0 warnings
+moon fmt / moon info               -> clean
+```
+
+下一步（按价值排序）：
+
+1. 函数库扩充到 100–200 个，补齐 500+ 一致性语料。
+2. 公式打印器与 `parse(print(ast)) == ast` round-trip 测试。
+3. 区域索引替代大区域逐格展开，加入 benchmark 回归。
+4. XLSX 适配层（复用 `mbtexcel`）。
+5. 撤销/重做、单元格样式、迭代计算。
+6. `mooncakes.io` 0.1.0 发布与演示视频。
 
 ---
 
