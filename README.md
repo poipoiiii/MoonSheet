@@ -38,11 +38,12 @@ In short: **mbtexcel moves bytes, MoonFrame moves columns, MoonSheet moves depen
 - **Cross-sheet references** — `=Budget!D8`, `=SUM(Budget!D2:D4)`, case-insensitive sheet names; worksheets are recalculated in dependency order and cross-sheet cycles become `#CIRC!`.
 - **Named ranges** — sheet-scoped names such as `Sales = D2:D4`; `=SUM(Sales)` works in evaluation and dependency tracking.
 - **Number formats** — General, fixed decimals with thousands grouping, currency, and percent; formats survive edits and JSON round-trips.
+- **Formula printer** — AST back to canonical text with only the parentheses that precedence requires, so `parse(print(parse(text)))` is equivalent to `parse(text)`. Useful for normalising formulas, explaining them, and migrating them.
 - **IO** — CSV import/export, a stable JSON workbook format, and XLSX in/out through the `lib/xlsx` adapter over [`moonbitlang/mbtexcel`](https://mooncakes.io/docs/moonbitlang/mbtexcel). MoonSheet does not implement OOXML itself.
-- **CLI** — `eval`, `calc`, `json`, `validate`, `stress`, `bench`, `xlsx-in`, `xlsx-out`.
+- **CLI** — `eval`, `calc`, `format`, `json`, `validate`, `stress`, `bench`, `xlsx-in`, `xlsx-out`.
 - **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation. The sample workbook is a three-sheet model (`Budget` → `Summary` → `Scenarios`) where every sheet reads across sheet boundaries.
 
-The test suite has 71 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, JSON, and XLSX round-trips.
+The test suite has 76 tests covering parsing, printing round-trips, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, JSON, and XLSX round-trips.
 
 ## Incremental recalculation, measured
 
@@ -89,6 +90,7 @@ Expected output:
 
 ```bash
 moon run cmd/moonsheet -- eval "=SUM(1,2,3)"
+moon run cmd/moonsheet -- format "=sum( a1:b2 , c3 )*2"
 moon run cmd/moonsheet -- calc "10,20\n=A1+B1,30"
 moon run cmd/moonsheet -- validate '{"sheets":[]}'
 moon run cmd/moonsheet -- stress 100

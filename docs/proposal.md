@@ -48,7 +48,7 @@ MoonBit 生态已经有不少相邻能力：
 2. **公式语言**
    - Lexer + Pratt parser + AST。
    - 数字、字符串、布尔、错误字面量、函数调用、区域、括号、一元/二元运算。
-   - 运算符优先级与结合性；引用解析。公式序列化回文本列为后续增强（见 §14）。
+   - 运算符优先级与结合性；引用解析；公式序列化回文本由 `lib/formula/printer.mbt` 提供，见 §14。
 3. **计算引擎**
    - 值类型：Number / Text / Boolean / Date / Error / Blank。
    - Excel 风格类型强转与错误传播（`#DIV/0!`、`#VALUE!`、`#REF!`、`#NAME?`、`#N/A`、`#NUM!`、`#CIRC!`）。
@@ -64,7 +64,7 @@ MoonBit 生态已经有不少相邻能力：
    - 类型保持的 JSON 工作簿导入导出（formula / kind / value）。
    - XLSX 常用子集列为后续集成点：复用现有 MoonBit xlsx 读取器，把值与公式交给 `Sheet::set_value` / `Sheet::set_formula`。
 6. **前端与工具**
-   - CLI：`eval`、`calc`、`json`、`validate`、`stress`、`bench`、`xlsx-in`、`xlsx-out`。
+   - CLI：`eval`、`calc`、`json`、`validate`、`stress`、`format`、`bench`、`xlsx-in`、`xlsx-out`。
    - Web 网格：单元格编辑、公式栏、区域选择、依赖高亮、错误/循环提示、重算计数。
    - 可复现的示例数据与一键启动脚本。
 
@@ -84,7 +84,7 @@ MoonBit 生态已经有不少相邻能力：
 | M1 | 公式前端 | Lexer、Parser、AST、公式序列化、解析错误定位 |
 | M2 | 求值核心 | 值模型、类型强转、引用/区域求值、错误传播、基础函数 |
 | M3 | 依赖图 | 双向依赖、拓扑重算、循环检测、增量 vs 全量一致性 |
-| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、数字格式、跨表引用、71 项测试 |
+| M4 | 函数与语义 | 七类函数库、日期/统计/查找边界、命名区域、数字格式、跨表引用、76 项测试 |
 | M5 | IO 与工具 | CSV/JSON、CLI、示例（xlsx 作为后续适配层） |
 | M6 | 展示与硬化 | Web 网格、文档、CI 全绿、mooncakes 0.1.0 |
 
@@ -206,7 +206,7 @@ pub enum Expr {
 
 - Pratt parser，优先级表显式定义。
 - 错误恢复：记录首个错误位置与期望 token，返回可读诊断。
-- 公式打印器（后续）保证 `parse(print(ast)) == ast`，用于 round-trip 测试。
+- 公式打印器保证 `parse(print(ast)) == ast`，用于 round-trip 测试。
 - 引用解析与求值分离：解析阶段只产出地址/区域，求值阶段再访问工作簿。
 
 ### 5.3 依赖图与重算
@@ -310,7 +310,7 @@ moon run cmd/moonsheet -- stress 1000
 | 层级 | 内容 | 目标 |
 |---|---|---|
 | 单元测试 | lexer / parser / AST printer / 强转 / 单函数 | 每个模块可独立验证 |
-| 一致性测试 | 公式用例表（当前 71 个测试，含跨模块一致性） | 与参考语义一致 |
+| 一致性测试 | 公式用例表（当前 76 个测试，含跨模块一致性） | 与参考语义一致 |
 | 图测试 | 依赖边、拓扑序、循环、区域索引、跨表依赖顺序 | 重算正确性 |
 | 属性测试 | 增量 == 全量；重算顺序无关；IO round-trip | 已覆盖主要路径，后续扩展随机化 |
 | Fuzz / 基准 | 随机公式、随机编辑序列、1k/10k/100k 单元格 | 后续增强 |
@@ -359,7 +359,7 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、切换�
 
 - [x] 核心库在 native / wasm / js 三后端可编译（CI 覆盖 native + wasm）。
 - [x] 公式解析、求值、依赖图、重算、循环检测全部有测试。
-- [ ] 500+ 一致性用例；错误码与边界行为有文档（当前 71 个测试，语料持续扩充）。
+- [ ] 500+ 一致性用例；错误码与边界行为有文档（当前 76 个测试，语料持续扩充）。
 - [x] 增量重算与全量重算在测试中逐格一致。
 - [x] CLI 与 Web demo 可按文档一键复现。
 - [ ] `mooncakes.io` 发布 0.1.0（README / design / CHANGELOG 已完整）。
@@ -426,7 +426,7 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、切换�
 | `io` | 274 | CSV/JSON |
 | `cmd` | 152 | CLI |
 | `web` | 546 | JS FFI、网格交互、工作表标签 |
-| 测试 | 788 | 71 个单元/一致性测试 |
+| 测试 | 788 | 76 个单元/一致性测试 |
 | **合计** | **约 5.7k** | 另有 HTML/CSS/JS 演示层 |
 
 符合赛事“4–10k 有效代码”的参考区间。函数库、XLSX 适配层、随机化属性测试和基准测试保留了明确的扩展点。
@@ -448,14 +448,14 @@ Web 演示通过静态服务器打开，点击单元格、输入公式、切换�
 - **公式前端**：Pratt parser、AST、引用收集；`Sheet!A1` / `Sheet!A1:B2` 跨表引用；大小写不敏感的表名。
 - **求值**：值模型与错误传播、惰性 `IF` / `IFERROR`、55+ 函数、命名区域、数字格式、`COUNTIF` / `SUMIF` / `INDEX` / `MATCH` / `VLOOKUP` 等范围函数。
 - **重算**：单表 dirty 子图增量重算；工作簿级按表依赖拓扑排序，上游改动自动驱动下游重算，跨表循环标记 `#CIRC!`。
-- **互操作**：CSV 导入导出、类型保持的 JSON 工作簿；CLI `eval` / `calc` / `json` / `validate` / `stress` / `bench` / `xlsx-in` / `xlsx-out`。
+- **互操作**：CSV 导入导出、类型保持的 JSON 工作簿；CLI `eval` / `calc` / `json` / `validate` / `stress` / `format` / `bench` / `xlsx-in` / `xlsx-out`。
 - **展示**：Web 网格含工作表标签、新增工作表、公式栏、依赖高亮、CSV 导入导出与错误着色。
-- **质量**：71 个测试；native / wasm / js 三端 `check` 0 错误 0 警告；GitHub Actions 三平台 CI。
+- **质量**：76 个测试；native / wasm / js 三端 `check` 0 错误 0 警告；GitHub Actions 三平台 CI。
 
 本地验收结果：
 
 ```text
-moon test --target wasm            -> 71 passed / 0 failed
+moon test --target wasm            -> 76 passed / 0 failed
 moon check --target native|wasm|js -> 0 errors, 0 warnings
 moon fmt / moon info               -> clean
 ```
