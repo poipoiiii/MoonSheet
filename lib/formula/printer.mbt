@@ -9,10 +9,10 @@
 fn precedence_of(op : BinaryOp) -> Int32 {
   match op {
     Eq | Ne | Lt | Le | Gt | Ge => 1
-    Add | Sub => 2
-    Mul | Div => 3
-    Pow => 4
     Concat => 2
+    Add | Sub => 3
+    Mul | Div => 4
+    Pow => 5
   }
 }
 
@@ -57,7 +57,7 @@ pub fn to_text(expr : Expr) -> String {
         Neg => "-"
         Plus => "+"
       }
-      symbol + wrap(inner, 5)
+      symbol + wrap(inner, 6)
     }
     Binary(op, left, right) => {
       let precedence = precedence_of(op)

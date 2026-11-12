@@ -18,6 +18,7 @@ enum Token {
   Comma
   Colon
   Bang
+  Amp
   Eq
   Ne
   Lt
@@ -189,6 +190,10 @@ fn lex(input : String) -> Result[Array[Token], ParseError] {
           tokens.push(Token::Colon)
           i = i + 1
         }
+        '&' => {
+          tokens.push(Token::Amp)
+          i = i + 1
+        }
         '!' => {
           tokens.push(Token::Bang)
           i = i + 1
@@ -261,7 +266,7 @@ fn Parser::parse_expr(self : Parser) -> Result[Expr, ParseError] {
 
 ///|
 fn Parser::parse_comparison(self : Parser) -> Result[Expr, ParseError] {
-  let first = match self.parse_additive() {
+  let first = match self.parse_concat() {
     Ok(e) => e
     Err(e) => return Err(e)
   }
@@ -279,7 +284,7 @@ fn Parser::parse_comparison(self : Parser) -> Result[Expr, ParseError] {
     match op {
       Some(op) => {
         self.pos = self.pos + 1
-        let right = match self.parse_additive() {
+        let right = match self.parse_concat() {
           Ok(e) => e
           Err(e) => return Err(e)
         }
@@ -287,6 +292,24 @@ fn Parser::parse_comparison(self : Parser) -> Result[Expr, ParseError] {
       }
       None => break
     }
+  }
+  Ok(left)
+}
+
+///|
+fn Parser::parse_concat(self : Parser) -> Result[Expr, ParseError] {
+  let first = match self.parse_additive() {
+    Ok(e) => e
+    Err(e) => return Err(e)
+  }
+  let mut left = first
+  while self.peek() == Token::Amp {
+    self.pos = self.pos + 1
+    let right = match self.parse_additive() {
+      Ok(e) => e
+      Err(e) => return Err(e)
+    }
+    left = Expr::Binary(BinaryOp::Concat, left, right)
   }
   Ok(left)
 }
