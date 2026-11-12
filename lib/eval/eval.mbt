@@ -128,37 +128,43 @@ fn eval_binary(
   match (l, r) {
     (@types.Value::Error(e), _) => @types.Value::Error(e)
     (_, @types.Value::Error(e)) => @types.Value::Error(e)
-    (@types.Value::Text(a), @types.Value::Text(b)) =>
-      match op {
-        @formula.BinaryOp::Eq => @types.Value::Boolean(a == b)
-        @formula.BinaryOp::Ne => @types.Value::Boolean(a != b)
-        @formula.BinaryOp::Concat => @types.Value::Text(a + b)
-        _ => @types.Value::Error(@types.CellError::ValueErr)
-      }
     _ =>
-      match (as_number(l), as_number(r)) {
-        (Some(a), Some(b)) =>
-          match op {
-            @formula.BinaryOp::Add => @types.Value::Number(a + b)
-            @formula.BinaryOp::Sub => @types.Value::Number(a - b)
-            @formula.BinaryOp::Mul => @types.Value::Number(a * b)
-            @formula.BinaryOp::Div =>
-              if b == 0.0 {
-                @types.Value::Error(@types.CellError::DivZero)
-              } else {
-                @types.Value::Number(a / b)
-              }
-            @formula.BinaryOp::Pow => @types.Value::Number(@math.pow(a, b))
-            @formula.BinaryOp::Eq => @types.Value::Boolean(a == b)
-            @formula.BinaryOp::Ne => @types.Value::Boolean(a != b)
-            @formula.BinaryOp::Lt => @types.Value::Boolean(a < b)
-            @formula.BinaryOp::Le => @types.Value::Boolean(a <= b)
-            @formula.BinaryOp::Gt => @types.Value::Boolean(a > b)
-            @formula.BinaryOp::Ge => @types.Value::Boolean(a >= b)
-            @formula.BinaryOp::Concat =>
-              @types.Value::Text(l.to_display() + r.to_display())
-          }
-        _ => @types.Value::Error(@types.CellError::ValueErr)
+      if op is @formula.BinaryOp::Concat {
+        @types.Value::Text(l.to_display() + r.to_display())
+      } else {
+        match (l, r) {
+          (@types.Value::Text(a), @types.Value::Text(b)) =>
+            match op {
+              @formula.BinaryOp::Eq => @types.Value::Boolean(a == b)
+              @formula.BinaryOp::Ne => @types.Value::Boolean(a != b)
+              _ => @types.Value::Error(@types.CellError::ValueErr)
+            }
+          _ =>
+            match (as_number(l), as_number(r)) {
+              (Some(a), Some(b)) =>
+                match op {
+                  @formula.BinaryOp::Add => @types.Value::Number(a + b)
+                  @formula.BinaryOp::Sub => @types.Value::Number(a - b)
+                  @formula.BinaryOp::Mul => @types.Value::Number(a * b)
+                  @formula.BinaryOp::Div =>
+                    if b == 0.0 {
+                      @types.Value::Error(@types.CellError::DivZero)
+                    } else {
+                      @types.Value::Number(a / b)
+                    }
+                  @formula.BinaryOp::Pow =>
+                    @types.Value::Number(@math.pow(a, b))
+                  @formula.BinaryOp::Eq => @types.Value::Boolean(a == b)
+                  @formula.BinaryOp::Ne => @types.Value::Boolean(a != b)
+                  @formula.BinaryOp::Lt => @types.Value::Boolean(a < b)
+                  @formula.BinaryOp::Le => @types.Value::Boolean(a <= b)
+                  @formula.BinaryOp::Gt => @types.Value::Boolean(a > b)
+                  @formula.BinaryOp::Ge => @types.Value::Boolean(a >= b)
+                  _ => @types.Value::Error(@types.CellError::ValueErr)
+                }
+              _ => @types.Value::Error(@types.CellError::ValueErr)
+            }
+        }
       }
   }
 }
