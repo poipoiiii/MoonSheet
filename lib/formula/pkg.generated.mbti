@@ -17,6 +17,10 @@ pub fn references_across(Expr, (String) -> @types.Range?) -> Array[(String?, @ty
 
 pub fn references_with(Expr, (String) -> @types.Range?) -> Array[@types.Address]
 
+pub fn to_formula(Expr) -> String
+
+pub fn to_text(Expr) -> String
+
 // Errors
 
 // Types and methods
