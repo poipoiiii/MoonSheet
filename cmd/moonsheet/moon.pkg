@@ -3,6 +3,7 @@ import {
   "poipoiiii/moonsheet/lib/workbook",
   "poipoiiii/moonsheet/lib/io",
   "poipoiiii/moonsheet/lib/xlsx",
+  "poipoiiii/moonsheet/lib/formula",
   "moonbitlang/core/env",
   "moonbitlang/x/fs",
 }

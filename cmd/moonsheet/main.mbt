@@ -17,6 +17,9 @@ fn usage() -> Unit {
     "  moonsheet bench [rows]         compare full vs incremental recalculation",
   )
   println(
+    "  moonsheet format <formula>     print the canonical form of a formula",
+  )
+  println(
     "  moonsheet xlsx-in <file>       import an XLSX file and recalculate",
   )
   println("  moonsheet xlsx-out <file>      write the sample model as XLSX")
@@ -184,6 +187,19 @@ fn bench_command(args : Array[String]) -> Unit {
 }
 
 ///|
+/// Parse a formula and print its canonical form.
+fn format_command(args : Array[String]) -> Unit {
+  if args.length() < 3 {
+    println("usage: moonsheet format <formula>")
+    return
+  }
+  match @formula.parse_formula(args[2]) {
+    Ok(expr) => println(@formula.to_formula(expr))
+    Err(error) => println("parse error at \{error.position}: \{error.message}")
+  }
+}
+
+///|
 /// Read an XLSX file through the `mbtexcel` adapter, recalculate, and report.
 fn xlsx_in_command(args : Array[String]) -> Unit {
   if args.length() < 3 {
@@ -299,6 +315,7 @@ fn main {
     "validate" => validate_command(args)
     "stress" => stress_command(args)
     "bench" => bench_command(args)
+    "format" => format_command(args)
     "xlsx-in" => xlsx_in_command(args)
     "xlsx-out" => xlsx_out_command(args)
     "help" => usage()
