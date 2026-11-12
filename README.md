@@ -1,11 +1,35 @@
 # MoonSheet
 
-**A headless spreadsheet calculation engine for MoonBit: formula parsing, typed evaluation, dependency-aware recalculation, CSV/JSON IO, a CLI, and a browser grid.**
+**An embeddable formula-and-recalculation kernel for MoonBit: parse formulas, evaluate with typed errors, track dependencies, and recompute only what changed.**
 
-MoonSheet is not an Excel clone. It is the reusable calculation core that report generators, document tools, and data tools can depend on. The web grid and CLI are demo layers on top of the library.
+MoonSheet is not a spreadsheet file library and not a grid UI. It is the calculation layer you put *behind* a report generator, a budgeting model, a rule engine, a document tool, or a teaching demo. The CLI and the browser grid are thin demo shells over the library.
+
+## Where it sits in the MoonBit ecosystem
+
+The MoonBit ecosystem already covers file formats and columnar data. MoonSheet deliberately covers the layer neither of them owns, and composes with both instead of reimplementing them.
+
+| Capability | `bobzhang/mbtexcel` | `ihb2032/MoonFrame` | MoonSheet |
+|---|---|---|---|
+| XLSX read / write | ✅ | — | planned adapter over `mbtexcel` |
+| DataFrame / columnar operations | — | ✅ | — |
+| CSV in / out | — | ✅ | ✅ (interchange only) |
+| Formula parsing (A1, ranges, cross-sheet) | — | — | ✅ |
+| Typed evaluation with error propagation | — | — | ✅ (`#DIV/0!`, `#REF!`, `#N/A`, `#CIRC!` …) |
+| Dependency graph, topological order, cycle detection | — | — | ✅ |
+| Incremental recalculation of a dirty subgraph | — | — | ✅ |
+| Workbook-level recalculation across sheets | — | — | ✅ |
+
+In short: **mbtexcel moves bytes, MoonFrame moves columns, MoonSheet moves dependencies.** A typical pipeline reads a workbook with `mbtexcel`, hands the values and formula strings to MoonSheet, and writes the recalculated result back — MoonSheet does not need to own the file format.
+
+## Who it is for
+
+- **Report and document generators** — templates with computed fields, recalculated when data changes.
+- **Budget / financial models** — three-statement style sheets where a single assumption change must flow through every dependent cell.
+- **Low-code form and rule engines** — formulas as validation and linkage rules, with deterministic error values.
+- **Teaching and tooling** — an inspectable formula parser, dependency graph, and evaluator.
 
 ## What works
-
+  
 - **Formula language** — numbers, strings, booleans, A1 references, ranges, cross-sheet references (`Budget!D8`, `SUM(Budget!A1:B2)`), function calls, arithmetic, comparison, unary operators, and `^` power.
 - **Typed values** — number, text, boolean, date serial, error, and blank; spreadsheet error codes (`#DIV/0!`, `#VALUE!`, `#REF!`, `#NAME?`, `#N/A`, `#NUM!`, `#CIRC!`).
 - **Function library** — 55+ functions across math, statistics, text, logic, lookup, date, and finance.
@@ -16,9 +40,28 @@ MoonSheet is not an Excel clone. It is the reusable calculation core that report
 - **Number formats** — General, fixed decimals with thousands grouping, currency, and percent; formats survive edits and JSON round-trips.
 - **IO** — CSV import/export and a stable JSON workbook format.
 - **CLI** — `eval`, `calc`, `json`, `validate`, `stress`.
-- **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation.
+- **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation. The sample workbook is a three-sheet model (`Budget` → `Summary` → `Scenarios`) where every sheet reads across sheet boundaries.
 
-The test suite has 65 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, and JSON.
+The test suite has 69 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, and JSON.
+
+## Incremental recalculation, measured
+
+`moonsheet bench` reports how many formula cells are actually evaluated. The metric is deterministic, so it can be checked on any machine and in CI.
+
+```text
+$ moon run cmd/moonsheet -- bench 200
+bench: 200 rows, 400 formula cells (value -> formula -> formula chain)
+  full recalculation         : 400 cells evaluated
+  one value edit, incremental: 2 cells evaluated (0.5% of full)
+  one formula edit           : 400 cells evaluated (graph rebuild)
+  no edit                    : 0 cells evaluated
+
+workbook: Assumptions!A1:A200 -> Income!B1:B200
+  full recalculation         : 200 cells evaluated
+  one assumption edit        : 1 cells evaluated (0.5% of full)
+```
+
+The cross-sheet case invalidates by *cell*, not by sheet: editing `Assumptions!A100` marks only the downstream formulas that read `Assumptions!A100`. This is the behaviour no file-format or DataFrame library provides, and it is covered by regression tests.
 
 ## Quick start
 
@@ -49,9 +92,10 @@ moon run cmd/moonsheet -- eval "=SUM(1,2,3)"
 moon run cmd/moonsheet -- calc "10,20\n=A1+B1,30"
 moon run cmd/moonsheet -- validate '{"sheets":[]}'
 moon run cmd/moonsheet -- stress 100
+moon run cmd/moonsheet -- bench 200
 ```
 
-`calc` treats `\n` as a row break and prints the recalculated CSV. `stress` builds a synthetic sheet and exercises the engine end to end.
+`calc` treats `\n` as a row break and prints the recalculated CSV. `stress` builds a synthetic sheet and exercises the engine end to end. `bench` compares full and incremental recalculation on a synthetic chain and on a two-sheet workbook.
 
 ## Web demo
 
@@ -60,7 +104,7 @@ powershell -ExecutionPolicy Bypass -File web/build.ps1
 python -m http.server 8000 --directory web
 ```
 
-Open http://localhost:8000/. Click a cell to select it, edit the formula bar, and press Enter. Formula cells show a corner mark; the selected cell and its direct dependencies are highlighted. Worksheet tabs switch between `Budget` and `Summary`, where the summary reads `=Budget!D8`; the `+` tab adds a worksheet. `Load CSV` reads a local file into `Sheet1` and `Export CSV` downloads the active sheet.
+Open http://localhost:8000/. Click a cell to select it, edit the formula bar, and press Enter. Formula cells show a corner mark; the selected cell and its direct dependencies are highlighted. Worksheet tabs switch between `Budget`, `Summary`, and `Scenarios`; `Scenarios` reads `=Budget!D6+Summary!B5`, so one edit in `Budget` flows through all three sheets. The `+` tab adds a worksheet. `Load CSV` reads a local file into `Sheet1` and `Export CSV` downloads the active sheet.
 
 The browser demo is a JavaScript target of the same MoonBit core. MoonBit owns the workbook and calculation; JavaScript only renders the DOM.
 

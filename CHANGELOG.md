@@ -17,7 +17,9 @@ All notable changes to this project are documented in this file.
 - Cross-sheet references (`=Budget!D8`, `=SUM(Budget!D2:D4)`) with case-insensitive sheet names.
 - Workbook-level recalculation in dependency order, with downstream invalidation after edits and `#CIRC!` marking for cross-sheet cycles.
 - Worksheet insertion order is preserved for stable tabs and JSON round-trips.
-- Browser demo: worksheet tabs, add-sheet action, and a `Budget` / `Summary` sample workbook that reads values across sheets.
+- Cross-sheet invalidation is now per cell: editing `Assumptions!A100` marks only the downstream formulas that read that exact cell, instead of rebuilding the dependent sheet.
+- `moonsheet bench [rows]` reports full versus incremental recalculation as deterministic evaluated-cell counts, including a two-sheet case.
+- Browser demo: worksheet tabs, add-sheet action, and a three-sheet `Budget` / `Summary` / `Scenarios` model that reads across sheet boundaries.
 - Per-cell number formats: General, fixed decimals with thousands grouping, currency, and percent. Formats survive value edits and JSON round-trips.
 - Dependency graph with precedents, dependents, topological order, and cycle detection.
 - Workbook / worksheet model with full and dirty-subgraph incremental recalculation.
@@ -27,4 +29,4 @@ All notable changes to this project are documented in this file.
 - CLI: `eval`, `calc`, `json`, `validate`, `stress`.
 - Browser demo: grid, formula bar, selection, dependency highlighting, CSV import/export, live recalculation.
 - Design system document and design notes.
-- 65 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cross-sheet references, cycles, CSV, and JSON.
+- 69 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cross-sheet references, cross-sheet per-cell invalidation, cycles, CSV, and JSON.
