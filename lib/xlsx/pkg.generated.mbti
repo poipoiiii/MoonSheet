@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "poipoiiii/moonsheet/lib/xlsx"
+
+import {
+  "poipoiiii/moonsheet/lib/workbook",
+}
+
+// Values
+pub fn export_bytes(@workbook.Workbook) -> Result[Bytes, String]
+
+pub fn import_bytes(BytesView) -> Result[@workbook.Workbook, String]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

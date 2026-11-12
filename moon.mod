@@ -13,3 +13,8 @@ repository = "https://github.com/poipoiiii/moonsheet"
 license = "MIT"
 
 keywords = [ "spreadsheet", "formula", "engine", "excel", "calc" ]
+
+import {
+  "moonbitlang/mbtexcel@0.3.1",
+  "moonbitlang/x@0.5.7",
+}
