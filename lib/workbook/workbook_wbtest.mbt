@@ -169,6 +169,38 @@ test "cross-sheet cycles become circ errors" {
 }
 
 ///|
+test "cross-sheet edit only recalculates affected cells" {
+  let workbook = Workbook::new()
+  let data = workbook.add_sheet("Data")
+  let report = workbook.add_sheet("Report")
+  let mut row = 1
+  while row <= 5 {
+    ignore(data.set_value("A\{row}", @types.Value::Number(1.0)))
+    ignore(report.set_formula("B\{row}", "=Data!A\{row}*2"))
+    row = row + 1
+  }
+  assert_eq(workbook.recalculate_all(), 5)
+  ignore(data.set_value("A3", @types.Value::Number(4.0)))
+  assert_eq(workbook.recalculate_all(), 1)
+  assert_eq(report.get_value("B3"), @types.Value::Number(8.0))
+  assert_eq(report.get_value("B4"), @types.Value::Number(2.0))
+}
+
+///|
+test "unrelated sheet edit does not touch dependents" {
+  let workbook = Workbook::new()
+  let data = workbook.add_sheet("Data")
+  let report = workbook.add_sheet("Report")
+  ignore(data.set_value("A1", @types.Value::Number(1.0)))
+  ignore(data.set_value("B1", @types.Value::Number(2.0)))
+  ignore(report.set_formula("A1", "=Data!A1*3"))
+  assert_eq(workbook.recalculate_all(), 1)
+  ignore(data.set_value("B1", @types.Value::Number(9.0)))
+  assert_eq(workbook.recalculate_all(), 0)
+  assert_eq(report.get_value("A1"), @types.Value::Number(3.0))
+}
+
+///|
 test "sheet order is preserved for tabs" {
   let workbook = Workbook::new()
   ignore(workbook.add_sheet("Budget"))

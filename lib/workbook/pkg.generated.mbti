@@ -25,6 +25,7 @@ pub struct Sheet {
   mut graph_valid : Bool
   mut full_recalc : Bool
   mut pending : Bool
+  mut touched : Map[Int32, Bool]
   names : Map[String, @types.Range]
 }
 pub fn Sheet::define_name(Self, String, String) -> Bool
@@ -36,6 +37,7 @@ pub fn Sheet::get_format(Self, String) -> @types.CellFormat
 pub fn Sheet::get_formula(Self, String) -> String?
 pub fn Sheet::get_value(Self, String) -> @types.Value
 pub fn Sheet::mark_circular(Self) -> Int32
+pub fn Sheet::mark_cross_dependents(Self, String, Map[Int32, Bool]?) -> Int32
 pub fn Sheet::mark_stale(Self) -> Unit
 pub fn Sheet::name_list(Self) -> Array[String]
 pub fn Sheet::named_range(Self, String) -> @types.Range?

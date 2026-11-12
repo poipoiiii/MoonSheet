@@ -108,7 +108,7 @@ The full path is always available as a correctness baseline. Tests compare value
 2. Orders worksheets with Kahn's algorithm. Any sheet left unordered is part of a cross-sheet cycle.
 3. Snapshots every sheet's values into a `book` map keyed by upper-cased sheet name.
 4. Recalculates each ordered sheet with `Sheet::recalculate_with(book)`, then refreshes its snapshot.
-5. Marks a sheet's dependents stale whenever the sheet had pending edits, so downstream formulas such as `=Budget!D8` pick up the new value.
+5. Marks only the downstream formulas that read the edited cells dirty (`Sheet::mark_cross_dependents`), so a cross-sheet edit does not rebuild the dependent worksheet. When the upstream sheet rebuilt its graph, every cross-sheet reference is marked instead.
 6. Marks every formula cell of a cyclic sheet as `#CIRC!`.
 
 `EvalContext::with_sheets` carries two extra callbacks for cross-sheet reads. A missing sheet yields `#REF!` for single cells and `#REF!`-valued ranges, so `=SUM(Ghost!A1:A2)` reports the error instead of silently summing to zero.

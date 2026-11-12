@@ -21,6 +21,9 @@ pub struct Sheet {
   mut full_recalc : Bool
   /// Set when values or formulas changed and not yet recalculated.
   mut pending : Bool
+  /// Cells written since the last workbook recalculation, so cross-sheet
+  /// dependents can be invalidated precisely.
+  mut touched : Map[Int32, Bool]
   names : Map[String, @types.Range]
 }
 
@@ -34,6 +37,7 @@ pub fn Sheet::new(name : String) -> Sheet {
     graph_valid: false,
     full_recalc: true,
     pending: false,
+    touched: Map([], capacity=0),
     names: Map([], capacity=4),
   }
 }
@@ -226,21 +230,27 @@ pub fn Workbook::recalculate_all(self : Workbook) -> Int32 {
     match self.sheets.get(name) {
       Some(sheet) => {
         let pending = sheet.pending
+        let will_rebuild = sheet.full_recalc || !sheet.graph_valid
+        let touched = sheet.touched
         let changed = sheet.recalculate_with(book)
         total = total + changed
-        book[upper_name(name)] = sheet.snapshot_values()
+        let after = sheet.snapshot_values()
+        book[upper_name(name)] = after
         if pending || changed > 0 {
+          let delta = if will_rebuild { None } else { Some(touched) }
           match plan.dependents.get(upper_name(name)) {
             Some(children) =>
               for child in children {
                 match self.sheets.get(child) {
-                  Some(target) => target.mark_stale()
+                  Some(target) =>
+                    ignore(target.mark_cross_dependents(name, delta))
                   None => ()
                 }
               }
             None => ()
           }
         }
+        sheet.touched = Map([], capacity=0)
       }
       None => ()
     }
@@ -273,6 +283,7 @@ pub fn Sheet::set_value(
       }
       self.cells[key] = { formula: None, value, format: existing_format, }
       self.pending = true
+      self.touched[key] = true
       if had_formula {
         self.graph_valid = false
         self.full_recalc = true
@@ -302,6 +313,7 @@ pub fn Sheet::set_formula(self : Sheet, a1 : String, formula : String) -> Bool {
       self.graph_valid = false
       self.full_recalc = true
       self.pending = true
+      self.touched[key] = true
       true
     }
     None => false
@@ -509,6 +521,56 @@ fn contains_name(names : Array[String], name : String) -> Bool {
 pub fn Sheet::mark_stale(self : Sheet) -> Unit {
   self.graph_valid = false
   self.full_recalc = true
+}
+
+///|
+/// Mark only the cells that read from `sheet_name` dirty, so a cross-sheet edit
+/// does not force a full recalculation of the downstream worksheet. When
+/// `changed` is given, only references to those cells are marked; `None` marks
+/// every reference to the sheet (used after an upstream graph rebuild).
+pub fn Sheet::mark_cross_dependents(
+  self : Sheet,
+  sheet_name : String,
+  changed : Map[Int32, Bool]?,
+) -> Int32 {
+  let target = upper_name(sheet_name)
+  let mut marked = 0
+  for key in self.cells.keys() {
+    match self.cells.get(key) {
+      Some(cell) =>
+        match cell.formula {
+          Some(text) =>
+            match @formula.parse_formula(text) {
+              Ok(expr) => {
+                let mut hit = false
+                for pair in @formula.references_across(expr, fn(_name) { None }) {
+                  match pair.0 {
+                    Some(name) =>
+                      if upper_name(name) == target {
+                        let touched = match changed {
+                          Some(keys) => keys.get(pair.1.key()) is Some(_)
+                          None => true
+                        }
+                        if touched {
+                          hit = true
+                        }
+                      }
+                    None => ()
+                  }
+                }
+                if hit {
+                  self.mark_dirty(key)
+                  marked = marked + 1
+                }
+              }
+              Err(_) => ()
+            }
+          None => ()
+        }
+      None => ()
+    }
+  }
+  marked
 }
 
 ///|
