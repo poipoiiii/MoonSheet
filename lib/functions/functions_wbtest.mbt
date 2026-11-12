@@ -51,3 +51,63 @@ test "median and large" {
   assert_eq(invoke("MEDIAN", [n(3.0), n(1.0), n(2.0)]), n(2.0))
   assert_eq(invoke("LARGE", [n(1.0), n(9.0), n(4.0), n(2.0), n(1.0)]), n(9.0))
 }
+
+///|
+test "trigonometric and angle conversion" {
+  assert_eq(invoke("SIN", [n(0.0)]), n(0.0))
+  assert_eq(invoke("COS", [n(0.0)]), n(1.0))
+  assert_true(close(invoke("RADIANS", [n(180.0)]), 3.141592653589793))
+  assert_true(close(invoke("DEGREES", [n(3.141592653589793)]), 180.0))
+  assert_true(close(invoke("ATAN2", [n(1.0), n(1.0)]), 0.7853981633974483))
+}
+
+///|
+test "factorial and quotient" {
+  assert_eq(invoke("FACT", [n(5.0)]), n(120.0))
+  assert_eq(invoke("FACT", [n(0.0)]), n(1.0))
+  assert_eq(
+    invoke("FACT", [n(-1.0)]),
+    @types.Value::Error(@types.CellError::Num),
+  )
+  assert_eq(invoke("QUOTIENT", [n(7.0), n(2.0)]), n(3.0))
+  assert_eq(invoke("QUOTIENT", [n(-7.0), n(2.0)]), n(-3.0))
+  assert_eq(
+    invoke("QUOTIENT", [n(1.0), n(0.0)]),
+    @types.Value::Error(@types.CellError::DivZero),
+  )
+}
+
+///|
+test "geomean rejects non-positive values" {
+  assert_true(close(invoke("GEOMEAN", [n(1.0), n(4.0)]), 2.0))
+  assert_eq(
+    invoke("GEOMEAN", [n(1.0), n(0.0)]),
+    @types.Value::Error(@types.CellError::Num),
+  )
+}
+
+///|
+test "exact compares case-sensitively" {
+  assert_eq(invoke("EXACT", [t("a"), t("a")]), @types.Value::Boolean(true))
+  assert_eq(invoke("EXACT", [t("a"), t("A")]), @types.Value::Boolean(false))
+}
+
+///|
+test "proper capitalises each word" {
+  assert_eq(invoke("PROPER", [t("hello wORLD")]), t("Hello World"))
+}
+
+///|
+fn close(value : @types.Value, expected : Double) -> Bool {
+  match value {
+    @types.Value::Number(actual) => {
+      let diff = if actual > expected {
+        actual - expected
+      } else {
+        expected - actual
+      }
+      diff < 0.000000001
+    }
+    _ => false
+  }
+}

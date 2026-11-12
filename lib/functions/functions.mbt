@@ -1408,6 +1408,143 @@ pub fn call(name : String, args : Array[@types.Value]) -> @types.Value? {
     "FV" => Some(fv_value(args))
     "PV" => Some(pv_value(args))
     "NPV" => Some(npv_value(args))
+    "SIN" => Some(trig(args, 0))
+    "COS" => Some(trig(args, 1))
+    "TAN" => Some(trig(args, 2))
+    "ATAN" => Some(trig(args, 3))
+    "ATAN2" => Some(atan2_value(args))
+    "RADIANS" => Some(trig(args, 4))
+    "DEGREES" => Some(trig(args, 5))
+    "FACT" => Some(fact_value(args))
+    "QUOTIENT" => Some(quotient_value(args))
+    "GEOMEAN" => Some(geomean(args))
+    "EXACT" => Some(exact_value(args))
+    "PROPER" => Some(proper(args))
     _ => None
   }
+}
+
+///|
+/// Shared implementation for one-argument trigonometric and angle functions.
+/// `kind` selects the operation so the registry stays a flat table.
+fn trig(args : Array[@types.Value], kind : Int32) -> @types.Value {
+  if args.length() < 1 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  let x = match as_number(args[0]) {
+    Some(n) => n
+    None => return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  let result = match kind {
+    0 => @math.sin(x)
+    1 => @math.cos(x)
+    2 => @math.tan(x)
+    3 => @math.atan(x)
+    4 => x * 3.141592653589793 / 180.0
+    _ => x * 180.0 / 3.141592653589793
+  }
+  @types.Value::Number(result)
+}
+
+///|
+fn atan2_value(args : Array[@types.Value]) -> @types.Value {
+  if args.length() < 2 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  match (as_number(args[0]), as_number(args[1])) {
+    (Some(y), Some(x)) => @types.Value::Number(@math.atan2(y, x))
+    _ => @types.Value::Error(@types.CellError::ValueErr)
+  }
+}
+
+///|
+fn fact_value(args : Array[@types.Value]) -> @types.Value {
+  if args.length() < 1 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  let n = match as_int(args[0]) {
+    Some(n) => n
+    None => return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  if n < 0 || n > 170 {
+    return @types.Value::Error(@types.CellError::Num)
+  }
+  let mut product = 1.0
+  let mut index = 2
+  while index <= n {
+    product = product * Double::from_int(index)
+    index = index + 1
+  }
+  @types.Value::Number(product)
+}
+
+///|
+fn quotient_value(args : Array[@types.Value]) -> @types.Value {
+  if args.length() < 2 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  match (as_number(args[0]), as_number(args[1])) {
+    (Some(numerator), Some(denominator)) =>
+      if denominator == 0.0 {
+        @types.Value::Error(@types.CellError::DivZero)
+      } else {
+        @types.Value::Number(
+          Double::from_int((numerator / denominator).to_int()),
+        )
+      }
+    _ => @types.Value::Error(@types.CellError::ValueErr)
+  }
+}
+
+///|
+fn geomean(args : Array[@types.Value]) -> @types.Value {
+  let values = numbers(args)
+  if values.length() == 0 {
+    return @types.Value::Error(@types.CellError::Num)
+  }
+  let mut total = 0.0
+  for value in values {
+    if value <= 0.0 {
+      return @types.Value::Error(@types.CellError::Num)
+    }
+    total = total + @math.ln(value)
+  }
+  @types.Value::Number(@math.exp(total / Double::from_int(values.length())))
+}
+
+///|
+fn exact_value(args : Array[@types.Value]) -> @types.Value {
+  if args.length() < 2 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  @types.Value::Boolean(args[0].to_display() == args[1].to_display())
+}
+
+///|
+fn is_letter(c : Char) -> Bool {
+  (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+}
+
+///|
+fn proper(args : Array[@types.Value]) -> @types.Value {
+  if args.length() < 1 {
+    return @types.Value::Error(@types.CellError::ValueErr)
+  }
+  let text = args[0].to_display()
+  let mut out = ""
+  let mut fresh = true
+  for c in text.to_array() {
+    if is_letter(c) {
+      if fresh {
+        out = out + c.to_ascii_uppercase().to_string()
+      } else {
+        out = out + c.to_ascii_lowercase().to_string()
+      }
+      fresh = false
+    } else {
+      out = out + c.to_string()
+      fresh = true
+    }
+  }
+  @types.Value::Text(out)
 }
