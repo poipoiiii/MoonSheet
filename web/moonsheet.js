@@ -196,6 +196,15 @@ function _M0TPB3MapGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(param0, 
   this.head = param5;
   this.tail = param6;
 }
+function _M0TPB3MapGibE(param0, param1, param2, param3, param4, param5, param6) {
+  this.entries = param0;
+  this.size = param1;
+  this.capacity = param2;
+  this.capacity_mask = param3;
+  this.grow_at = param4;
+  this.head = param5;
+  this.tail = param6;
+}
 function _M0TPB3MapGsiE(param0, param1, param2, param3, param4, param5, param6) {
   this.entries = param0;
   this.size = param1;
@@ -206,15 +215,6 @@ function _M0TPB3MapGsiE(param0, param1, param2, param3, param4, param5, param6) 
   this.tail = param6;
 }
 function _M0TPB3MapGiiE(param0, param1, param2, param3, param4, param5, param6) {
-  this.entries = param0;
-  this.size = param1;
-  this.capacity = param2;
-  this.capacity_mask = param3;
-  this.grow_at = param4;
-  this.head = param5;
-  this.tail = param6;
-}
-function _M0TPB3MapGibE(param0, param1, param2, param3, param4, param5, param6) {
   this.entries = param0;
   this.size = param1;
   this.capacity = param2;
@@ -284,6 +284,14 @@ function _M0TPB5EntryGiRP49poipoiiii9moonsheet3lib8workbook4CellE(param0, param1
   this.key = param4;
   this.value = param5;
 }
+function _M0TPB5EntryGibE(param0, param1, param2, param3, param4, param5) {
+  this.prev = param0;
+  this.next = param1;
+  this.psl = param2;
+  this.hash = param3;
+  this.key = param4;
+  this.value = param5;
+}
 function _M0TPB5EntryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(param0, param1, param2, param3, param4, param5) {
   this.prev = param0;
   this.next = param1;
@@ -293,14 +301,6 @@ function _M0TPB5EntryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(param0
   this.value = param5;
 }
 function _M0TPB5EntryGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(param0, param1, param2, param3, param4, param5) {
-  this.prev = param0;
-  this.next = param1;
-  this.psl = param2;
-  this.hash = param3;
-  this.key = param4;
-  this.value = param5;
-}
-function _M0TPB5EntryGibE(param0, param1, param2, param3, param4, param5) {
   this.prev = param0;
   this.next = param1;
   this.psl = param2;
@@ -636,7 +636,7 @@ function _M0TPB9ArrayViewGUiiEE(param0, param1, param2) {
   this.start = param1;
   this.end = param2;
 }
-function _M0TP49poipoiiii9moonsheet3lib8workbook5Sheet(param0, param1, param2, param3, param4, param5, param6, param7) {
+function _M0TP49poipoiiii9moonsheet3lib8workbook5Sheet(param0, param1, param2, param3, param4, param5, param6, param7, param8) {
   this.name = param0;
   this.cells = param1;
   this.graph = param2;
@@ -644,7 +644,8 @@ function _M0TP49poipoiiii9moonsheet3lib8workbook5Sheet(param0, param1, param2, p
   this.graph_valid = param4;
   this.full_recalc = param5;
   this.pending = param6;
-  this.names = param7;
+  this.touched = param7;
+  this.names = param8;
 }
 function _M0TPB9ArrayViewGUiRP49poipoiiii9moonsheet3lib8workbook4CellEE(param0, param1, param2) {
   this.buf = param0;
@@ -1040,22 +1041,23 @@ const _M0FP49poipoiiii9moonsheet3lib7formula3lexN6constrS2365 = 61;
 const _M0FP49poipoiiii9moonsheet3lib7formula3lexN6constrS2366 = 62;
 const _M0FP49poipoiiii9moonsheet3lib7formula3lexN6constrS2367 = 61;
 const _M0FP49poipoiiii9moonsheet3lib7formula14parse__formulaN6constrS2559 = 61;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10get__valueN6constrS4236 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10get__valueN6constrS4277 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
 const _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph3newN6constrS3749 = 0;
 const _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph3newN6constrS3750 = 0;
 const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3821 = 16;
 const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3822 = 0;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3823 = 4;
-const _M0MP39poipoiiii9moonsheet3web3App6renderN6constrS4432 = 8;
-const _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3newN6constrS3828 = 4;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3823 = 0;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3824 = 4;
+const _M0MP39poipoiiii9moonsheet3web3App6renderN6constrS4484 = 8;
+const _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3newN6constrS3830 = 4;
 const _M0MPC16string10StringView4trimN6recordS424 = new _M0TPC16string10StringView("\t\n\r ", 0, 4);
 const _M0MPC16string10StringView4findN6constrS288 = 0;
-const _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4306 = new _M0TPC16string10StringView("\n", 0, 1);
-const _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4307 = new _M0TPC16string10StringView(",", 0, 1);
-const _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4322 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value7Boolean(true);
-const _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4323 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value7Boolean(false);
-const _M0FP49poipoiiii9moonsheet3lib2io9load__csvN6constrS4329 = 61;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__valuesN6constrS4055 = 16;
+const _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4347 = new _M0TPC16string10StringView("\n", 0, 1);
+const _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4348 = new _M0TPC16string10StringView(",", 0, 1);
+const _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4363 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value7Boolean(true);
+const _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4364 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value7Boolean(false);
+const _M0FP49poipoiiii9moonsheet3lib2io9load__csvN6constrS4370 = 61;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__valuesN6constrS4102 = 16;
 const _M0FP49poipoiiii9moonsheet3lib9functions10as__numberN6constrS2591 = new _M0DTPC16option6OptionGdE4Some(0);
 const _M0FP49poipoiiii9moonsheet3lib9functions8varianceN6constrS2787 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(0);
 const _M0FP49poipoiiii9moonsheet3lib9functions5rightN6constrS2975 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
@@ -1240,60 +1242,71 @@ const _M0FP49poipoiiii9moonsheet3lib4eval13eval__vlookupN6constrS3675 = new _M0D
 const _M0FP49poipoiiii9moonsheet3lib4eval13eval__vlookupN6constrS3676 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(4);
 const _M0FP49poipoiiii9moonsheet3lib4eval13eval__vlookupN6constrS3677 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(4);
 const _M0FP49poipoiiii9moonsheet3lib4eval13eval__vlookupN6constrS3678 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
-const _M0FP49poipoiiii9moonsheet3lib8workbook18ref__error__valuesN6constrS3980 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
-const _M0FP49poipoiiii9moonsheet3lib8workbook10eval__exprN6constrS3987 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
-const _M0FP49poipoiiii9moonsheet3lib8workbook19eval__formula__textN6constrS4014 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graphN6constrS4025 = 8;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4076 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4077 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(6);
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4078 = 0;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4115 = 0;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4116 = 0;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4117 = 0;
-const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circularN6constrS3955 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(6);
+const _M0FP49poipoiiii9moonsheet3lib8workbook18ref__error__valuesN6constrS4027 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
+const _M0FP49poipoiiii9moonsheet3lib8workbook10eval__exprN6constrS4034 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(2);
+const _M0FP49poipoiiii9moonsheet3lib8workbook19eval__formula__textN6constrS4061 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graphN6constrS4072 = 8;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4123 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(1);
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4124 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(6);
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4125 = 0;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4162 = 0;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4163 = 0;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4164 = 0;
+const _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circularN6constrS3957 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value5Error(6);
+const _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__allN6constrS4198 = 0;
 const _M0MP49poipoiiii9moonsheet3lib5types5Range5parseN6recordS2281 = new _M0TPC16string10StringView(":", 0, 1);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4380 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Item");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4381 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Qty");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4382 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Unit price");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4383 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Total");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4384 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Note");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4385 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("MoonBit license");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4386 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(1);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4387 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(0);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4388 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("open source");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4389 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Compiler seats");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4390 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(5);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4391 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(120);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4392 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("team");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4393 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("CI minutes");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4394 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(200);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4395 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(0.5);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4396 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("monthly");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4397 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4398 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4399 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4400 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4401 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4402 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4403 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Subtotal");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4404 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Tax 8%");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4405 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Grand total");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4406 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4407 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4408 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4409 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Metric");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4410 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Value");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4411 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Line items");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4412 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Subtotal");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4413 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Tax");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4414 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Grand total");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4415 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4416 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4417 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4418 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Share of tax");
-const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4419 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat7Percent(1);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4421 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Item");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4422 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Qty");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4423 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Unit price");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4424 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Total");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4425 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Note");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4426 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("MoonBit license");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4427 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(1);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4428 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(0);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4429 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("open source");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4430 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Compiler seats");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4431 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(5);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4432 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(120);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4433 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("team");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4434 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("CI minutes");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4435 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(200);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4436 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value6Number(0.5);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4437 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("monthly");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4438 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4439 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4440 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4441 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4442 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4443 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4444 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Subtotal");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4445 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Tax 8%");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4446 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Grand total");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4447 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4448 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4449 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4450 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Metric");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4451 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Value");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4452 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Line items");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4453 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Subtotal");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4454 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Tax");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4455 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Grand total");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4456 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4457 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4458 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4459 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Share of tax");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4460 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat7Percent(1);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4461 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Driver");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4462 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Value");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4463 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Subtotal");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4464 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4465 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Effective tax rate");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4466 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat7Percent(1);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4467 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Double volume");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4468 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4469 = new _M0DTP49poipoiiii9moonsheet3lib5types5Value4Text("Sheet covers");
+const _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4470 = new _M0DTP49poipoiiii9moonsheet3lib5types10CellFormat8Currency("¥", 2);
 const _M0FP39poipoiiii9moonsheet3web3app = _M0FP39poipoiiii9moonsheet3web9make__app();
-const _M0MP39poipoiiii9moonsheet3web3App6commitN6constrS4487 = 61;
+const _M0MP39poipoiiii9moonsheet3web3App6commitN6constrS4539 = 61;
 const _M0FPC28internal7strconv20parse__int64_2einnerN6recordS1942 = new _M0TPC16string10StringView("", 0, 0);
 const _M0MP49poipoiiii9moonsheet3lib5types10CellFormat5parseN6recordS2230 = new _M0TPC16string10StringView(":", 0, 1);
 function _M0FPB13consume4__acc(acc, input) {
@@ -2431,6 +2444,14 @@ function _M0FPB8new__mapGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(cap
   const _bind$4 = undefined;
   return new _M0TPB3MapGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(_bind$3, 0, capacity$2, _bind, _bind$2, _bind$4, -1);
 }
+function _M0FPB8new__mapGibE(capacity) {
+  const capacity$2 = _M0MPC13int3Int20next__power__of__two(capacity);
+  const _bind = capacity$2 - 1 | 0;
+  const _bind$2 = (Math.imul(capacity$2, 13) | 0) / 16 | 0;
+  const _bind$3 = $make_array_len_and_init(capacity$2, undefined);
+  const _bind$4 = undefined;
+  return new _M0TPB3MapGibE(_bind$3, 0, capacity$2, _bind, _bind$2, _bind$4, -1);
+}
 function _M0FPB8new__mapGsiE(capacity) {
   const capacity$2 = _M0MPC13int3Int20next__power__of__two(capacity);
   const _bind = capacity$2 - 1 | 0;
@@ -2446,14 +2467,6 @@ function _M0FPB8new__mapGiiE(capacity) {
   const _bind$3 = $make_array_len_and_init(capacity$2, undefined);
   const _bind$4 = undefined;
   return new _M0TPB3MapGiiE(_bind$3, 0, capacity$2, _bind, _bind$2, _bind$4, -1);
-}
-function _M0FPB8new__mapGibE(capacity) {
-  const capacity$2 = _M0MPC13int3Int20next__power__of__two(capacity);
-  const _bind = capacity$2 - 1 | 0;
-  const _bind$2 = (Math.imul(capacity$2, 13) | 0) / 16 | 0;
-  const _bind$3 = $make_array_len_and_init(capacity$2, undefined);
-  const _bind$4 = undefined;
-  return new _M0TPB3MapGibE(_bind$3, 0, capacity$2, _bind, _bind$2, _bind$4, -1);
 }
 function _M0FPB8new__mapGsRPB5ArrayGsEE(capacity) {
   const capacity$2 = _M0MPC13int3Int20next__power__of__two(capacity);
@@ -2543,7 +2556,7 @@ function _M0MPB3Map20add__entry__to__tailGiRP49poipoiiii9moonsheet3lib8workbook4
   self.entries[idx] = entry;
   self.size = self.size + 1 | 0;
 }
-function _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, entry) {
+function _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry) {
   const _bind = self.tail;
   if (_bind === -1) {
     self.head = entry;
@@ -2563,7 +2576,7 @@ function _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5
   self.entries[idx] = entry;
   self.size = self.size + 1 | 0;
 }
-function _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry) {
+function _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, entry) {
   const _bind = self.tail;
   if (_bind === -1) {
     self.head = entry;
@@ -2725,7 +2738,7 @@ function _M0MPB3Map10set__entryGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self
   }
   self.entries[new_idx] = entry;
 }
-function _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry, new_idx) {
+function _M0MPB3Map10set__entryGibE(self, entry, new_idx) {
   const _bind = entry.next;
   if (_bind === undefined) {
     self.tail = new_idx;
@@ -2736,7 +2749,7 @@ function _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5Valu
   }
   self.entries[new_idx] = entry;
 }
-function _M0MPB3Map10set__entryGibE(self, entry, new_idx) {
+function _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry, new_idx) {
   const _bind = entry.next;
   if (_bind === undefined) {
     self.tail = new_idx;
@@ -2875,37 +2888,6 @@ function _M0MPB3Map10push__awayGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self
     }
   }
 }
-function _M0MPB3Map10push__awayGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, entry) {
-  let _tmp = entry.psl + 1 | 0;
-  let _tmp$2 = idx + 1 & self.capacity_mask;
-  let _tmp$3 = entry;
-  while (true) {
-    const psl = _tmp;
-    const idx$2 = _tmp$2;
-    const entry$2 = _tmp$3;
-    const _bind = self.entries[idx$2];
-    if (_bind === undefined) {
-      entry$2.psl = psl;
-      _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry$2, idx$2);
-      return;
-    } else {
-      const _Some = _bind;
-      const _curr_entry = _Some;
-      if (psl > _curr_entry.psl) {
-        entry$2.psl = psl;
-        _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry$2, idx$2);
-        _tmp = _curr_entry.psl + 1 | 0;
-        _tmp$2 = idx$2 + 1 & self.capacity_mask;
-        _tmp$3 = _curr_entry;
-        continue;
-      } else {
-        _tmp = psl + 1 | 0;
-        _tmp$2 = idx$2 + 1 & self.capacity_mask;
-        continue;
-      }
-    }
-  }
-}
 function _M0MPB3Map10push__awayGibE(self, idx, entry) {
   let _tmp = entry.psl + 1 | 0;
   let _tmp$2 = idx + 1 & self.capacity_mask;
@@ -2925,6 +2907,37 @@ function _M0MPB3Map10push__awayGibE(self, idx, entry) {
       if (psl > _curr_entry.psl) {
         entry$2.psl = psl;
         _M0MPB3Map10set__entryGibE(self, entry$2, idx$2);
+        _tmp = _curr_entry.psl + 1 | 0;
+        _tmp$2 = idx$2 + 1 & self.capacity_mask;
+        _tmp$3 = _curr_entry;
+        continue;
+      } else {
+        _tmp = psl + 1 | 0;
+        _tmp$2 = idx$2 + 1 & self.capacity_mask;
+        continue;
+      }
+    }
+  }
+}
+function _M0MPB3Map10push__awayGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, entry) {
+  let _tmp = entry.psl + 1 | 0;
+  let _tmp$2 = idx + 1 & self.capacity_mask;
+  let _tmp$3 = entry;
+  while (true) {
+    const psl = _tmp;
+    const idx$2 = _tmp$2;
+    const entry$2 = _tmp$3;
+    const _bind = self.entries[idx$2];
+    if (_bind === undefined) {
+      entry$2.psl = psl;
+      _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry$2, idx$2);
+      return;
+    } else {
+      const _Some = _bind;
+      const _curr_entry = _Some;
+      if (psl > _curr_entry.psl) {
+        entry$2.psl = psl;
+        _M0MPB3Map10set__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, entry$2, idx$2);
         _tmp = _curr_entry.psl + 1 | 0;
         _tmp$2 = idx$2 + 1 & self.capacity_mask;
         _tmp$3 = _curr_entry;
@@ -3183,36 +3196,6 @@ function _M0MPB3Map20rehash__place__entryGiRP49poipoiiii9moonsheet3lib8workbook4
     }
   }
 }
-function _M0MPB3Map20rehash__place__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, outer) {
-  const hash = outer.hash;
-  let _tmp = 0;
-  let _tmp$2 = hash & self.capacity_mask;
-  while (true) {
-    const psl = _tmp;
-    const idx = _tmp$2;
-    const _bind = self.entries[idx];
-    if (_bind === undefined) {
-      outer.psl = psl;
-      outer.prev = self.tail;
-      _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, outer);
-      return undefined;
-    } else {
-      const _Some = _bind;
-      const _curr = _Some;
-      if (psl > _curr.psl) {
-        _M0MPB3Map10push__awayGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, _curr);
-        outer.psl = psl;
-        outer.prev = self.tail;
-        _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, outer);
-        return undefined;
-      } else {
-        _tmp = psl + 1 | 0;
-        _tmp$2 = idx + 1 & self.capacity_mask;
-        continue;
-      }
-    }
-  }
-}
 function _M0MPB3Map20rehash__place__entryGibE(self, outer) {
   const hash = outer.hash;
   let _tmp = 0;
@@ -3234,6 +3217,36 @@ function _M0MPB3Map20rehash__place__entryGibE(self, outer) {
         outer.psl = psl;
         outer.prev = self.tail;
         _M0MPB3Map20add__entry__to__tailGibE(self, idx, outer);
+        return undefined;
+      } else {
+        _tmp = psl + 1 | 0;
+        _tmp$2 = idx + 1 & self.capacity_mask;
+        continue;
+      }
+    }
+  }
+}
+function _M0MPB3Map20rehash__place__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, outer) {
+  const hash = outer.hash;
+  let _tmp = 0;
+  let _tmp$2 = hash & self.capacity_mask;
+  while (true) {
+    const psl = _tmp;
+    const idx = _tmp$2;
+    const _bind = self.entries[idx];
+    if (_bind === undefined) {
+      outer.psl = psl;
+      outer.prev = self.tail;
+      _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, outer);
+      return undefined;
+    } else {
+      const _Some = _bind;
+      const _curr = _Some;
+      if (psl > _curr.psl) {
+        _M0MPB3Map10push__awayGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, _curr);
+        outer.psl = psl;
+        outer.prev = self.tail;
+        _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, outer);
         return undefined;
       } else {
         _tmp = psl + 1 | 0;
@@ -3477,33 +3490,6 @@ function _M0MPB3Map4growGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self) {
     }
   }
 }
-function _M0MPB3Map4growGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self) {
-  const old_head = self.head;
-  const new_capacity = self.capacity << 1;
-  self.entries = $make_array_len_and_init(new_capacity, undefined);
-  self.capacity = new_capacity;
-  self.capacity_mask = new_capacity - 1 | 0;
-  const _p = self.capacity;
-  self.grow_at = (Math.imul(_p, 13) | 0) / 16 | 0;
-  self.size = 0;
-  self.head = undefined;
-  self.tail = -1;
-  let _tmp = old_head;
-  while (true) {
-    const x = _tmp;
-    if (x === undefined) {
-      return;
-    } else {
-      const _Some = x;
-      const _e = _Some;
-      const next_in_chain = _e.next;
-      _e.next = undefined;
-      _M0MPB3Map20rehash__place__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, _e);
-      _tmp = next_in_chain;
-      continue;
-    }
-  }
-}
 function _M0MPB3Map4growGibE(self) {
   const old_head = self.head;
   const new_capacity = self.capacity << 1;
@@ -3526,6 +3512,33 @@ function _M0MPB3Map4growGibE(self) {
       const next_in_chain = _e.next;
       _e.next = undefined;
       _M0MPB3Map20rehash__place__entryGibE(self, _e);
+      _tmp = next_in_chain;
+      continue;
+    }
+  }
+}
+function _M0MPB3Map4growGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self) {
+  const old_head = self.head;
+  const new_capacity = self.capacity << 1;
+  self.entries = $make_array_len_and_init(new_capacity, undefined);
+  self.capacity = new_capacity;
+  self.capacity_mask = new_capacity - 1 | 0;
+  const _p = self.capacity;
+  self.grow_at = (Math.imul(_p, 13) | 0) / 16 | 0;
+  self.size = 0;
+  self.head = undefined;
+  self.tail = -1;
+  let _tmp = old_head;
+  while (true) {
+    const x = _tmp;
+    if (x === undefined) {
+      return;
+    } else {
+      const _Some = x;
+      const _e = _Some;
+      const next_in_chain = _e.next;
+      _e.next = undefined;
+      _M0MPB3Map20rehash__place__entryGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, _e);
       _tmp = next_in_chain;
       continue;
     }
@@ -3785,6 +3798,52 @@ function _M0MPB3Map15set__with__hashGiRP49poipoiiii9moonsheet3lib8workbook4CellE
     }
   }
 }
+function _M0MPB3Map15set__with__hashGibE(self, key, value, hash) {
+  let _tmp = 0;
+  let _tmp$2 = hash & self.capacity_mask;
+  while (true) {
+    const psl = _tmp;
+    const idx = _tmp$2;
+    const _bind = self.entries[idx];
+    if (_bind === undefined) {
+      if (self.size >= self.grow_at) {
+        _M0MPB3Map4growGibE(self);
+        _tmp = 0;
+        _tmp$2 = hash & self.capacity_mask;
+        continue;
+      }
+      const _bind$2 = self.tail;
+      const _bind$3 = undefined;
+      const entry = new _M0TPB5EntryGibE(_bind$2, _bind$3, psl, hash, key, value);
+      _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry);
+      return undefined;
+    } else {
+      const _Some = _bind;
+      const _curr_entry = _Some;
+      if (_curr_entry.hash === hash && _curr_entry.key === key) {
+        _curr_entry.value = value;
+        return undefined;
+      }
+      if (psl > _curr_entry.psl) {
+        if (self.size >= self.grow_at) {
+          _M0MPB3Map4growGibE(self);
+          _tmp = 0;
+          _tmp$2 = hash & self.capacity_mask;
+          continue;
+        }
+        _M0MPB3Map10push__awayGibE(self, idx, _curr_entry);
+        const _bind$2 = self.tail;
+        const _bind$3 = undefined;
+        const entry = new _M0TPB5EntryGibE(_bind$2, _bind$3, psl, hash, key, value);
+        _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry);
+        return undefined;
+      }
+      _tmp = psl + 1 | 0;
+      _tmp$2 = idx + 1 & self.capacity_mask;
+      continue;
+    }
+  }
+}
 function _M0MPB3Map15set__with__hashGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, key, value, hash) {
   let _tmp = 0;
   let _tmp$2 = hash & self.capacity_mask;
@@ -3869,52 +3928,6 @@ function _M0MPB3Map15set__with__hashGsRP49poipoiiii9moonsheet3lib8workbook5Sheet
         const _bind$3 = undefined;
         const entry = new _M0TPB5EntryGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(_bind$2, _bind$3, psl, hash, key, value);
         _M0MPB3Map20add__entry__to__tailGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, idx, entry);
-        return undefined;
-      }
-      _tmp = psl + 1 | 0;
-      _tmp$2 = idx + 1 & self.capacity_mask;
-      continue;
-    }
-  }
-}
-function _M0MPB3Map15set__with__hashGibE(self, key, value, hash) {
-  let _tmp = 0;
-  let _tmp$2 = hash & self.capacity_mask;
-  while (true) {
-    const psl = _tmp;
-    const idx = _tmp$2;
-    const _bind = self.entries[idx];
-    if (_bind === undefined) {
-      if (self.size >= self.grow_at) {
-        _M0MPB3Map4growGibE(self);
-        _tmp = 0;
-        _tmp$2 = hash & self.capacity_mask;
-        continue;
-      }
-      const _bind$2 = self.tail;
-      const _bind$3 = undefined;
-      const entry = new _M0TPB5EntryGibE(_bind$2, _bind$3, psl, hash, key, value);
-      _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry);
-      return undefined;
-    } else {
-      const _Some = _bind;
-      const _curr_entry = _Some;
-      if (_curr_entry.hash === hash && _curr_entry.key === key) {
-        _curr_entry.value = value;
-        return undefined;
-      }
-      if (psl > _curr_entry.psl) {
-        if (self.size >= self.grow_at) {
-          _M0MPB3Map4growGibE(self);
-          _tmp = 0;
-          _tmp$2 = hash & self.capacity_mask;
-          continue;
-        }
-        _M0MPB3Map10push__awayGibE(self, idx, _curr_entry);
-        const _bind$2 = self.tail;
-        const _bind$3 = undefined;
-        const entry = new _M0TPB5EntryGibE(_bind$2, _bind$3, psl, hash, key, value);
-        _M0MPB3Map20add__entry__to__tailGibE(self, idx, entry);
         return undefined;
       }
       _tmp = psl + 1 | 0;
@@ -4251,14 +4264,14 @@ function _M0MPB3Map3setGsbE(self, key, value) {
 function _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self, key, value) {
   _M0MPB3Map15set__with__hashGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self, key, value, _M0IPC13int3IntPB4Hash4hash(key));
 }
+function _M0MPB3Map3setGibE(self, key, value) {
+  _M0MPB3Map15set__with__hashGibE(self, key, value, _M0IPC13int3IntPB4Hash4hash(key));
+}
 function _M0MPB3Map3setGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, key, value) {
   _M0MPB3Map15set__with__hashGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(self, key, value, _M0IPC16string6StringPB4Hash4hash(key));
 }
 function _M0MPB3Map3setGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(self, key, value) {
   _M0MPB3Map15set__with__hashGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(self, key, value, _M0IPC16string6StringPB4Hash4hash(key));
-}
-function _M0MPB3Map3setGibE(self, key, value) {
-  _M0MPB3Map15set__with__hashGibE(self, key, value, _M0IPC13int3IntPB4Hash4hash(key));
 }
 function _M0MPB3Map3setGsiE(self, key, value) {
   _M0MPB3Map15set__with__hashGsiE(self, key, value, _M0IPC16string6StringPB4Hash4hash(key));
@@ -4327,6 +4340,33 @@ function _M0MPB3Map3MapGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(arr,
     if (_ < _bind) {
       const e = arr.buf[arr.start + _ | 0];
       _M0MPB3Map3setGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(m, e._0, e._1);
+      _tmp = _ + 1 | 0;
+      continue;
+    } else {
+      break;
+    }
+  }
+  return m;
+}
+function _M0MPB3Map3MapGibE(arr, capacity) {
+  const length = arr.end - arr.start | 0;
+  let capacity$2;
+  if (capacity === undefined) {
+    capacity$2 = length === 0 ? 8 : _M0FPB21capacity__for__length(length);
+  } else {
+    const _Some = capacity;
+    const _capacity = _Some;
+    const _p = _M0FPB21capacity__for__length(length);
+    capacity$2 = _capacity > _p ? _capacity : _p;
+  }
+  const m = _M0FPB8new__mapGibE(capacity$2);
+  const _bind = arr.end - arr.start | 0;
+  let _tmp = 0;
+  while (true) {
+    const _ = _tmp;
+    if (_ < _bind) {
+      const e = arr.buf[arr.start + _ | 0];
+      _M0MPB3Map3setGibE(m, e._0, e._1);
       _tmp = _ + 1 | 0;
       continue;
     } else {
@@ -4408,33 +4448,6 @@ function _M0MPB3Map3MapGiiE(arr, capacity) {
     if (_ < _bind) {
       const e = arr.buf[arr.start + _ | 0];
       _M0MPB3Map3setGiiE(m, e._0, e._1);
-      _tmp = _ + 1 | 0;
-      continue;
-    } else {
-      break;
-    }
-  }
-  return m;
-}
-function _M0MPB3Map3MapGibE(arr, capacity) {
-  const length = arr.end - arr.start | 0;
-  let capacity$2;
-  if (capacity === undefined) {
-    capacity$2 = length === 0 ? 8 : _M0FPB21capacity__for__length(length);
-  } else {
-    const _Some = capacity;
-    const _capacity = _Some;
-    const _p = _M0FPB21capacity__for__length(length);
-    capacity$2 = _capacity > _p ? _capacity : _p;
-  }
-  const m = _M0FPB8new__mapGibE(capacity$2);
-  const _bind = arr.end - arr.start | 0;
-  let _tmp = 0;
-  while (true) {
-    const _ = _tmp;
-    if (_ < _bind) {
-      const e = arr.buf[arr.start + _ | 0];
-      _M0MPB3Map3setGibE(m, e._0, e._1);
       _tmp = _ + 1 | 0;
       continue;
     } else {
@@ -12057,11 +12070,13 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3new(name) {
   const _bind$2 = [];
   const _tmp$3 = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$2, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3822);
   const _bind$3 = [];
-  return new _M0TP49poipoiiii9moonsheet3lib8workbook5Sheet(name, _tmp, _tmp$2, _tmp$3, false, true, false, _M0MPB3Map3MapGsRP49poipoiiii9moonsheet3lib5types5RangeE(new _M0TPB9ArrayViewGUsRP49poipoiiii9moonsheet3lib5types5RangeEE(_bind$3, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3823));
+  const _tmp$4 = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$3, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3823);
+  const _bind$4 = [];
+  return new _M0TP49poipoiiii9moonsheet3lib8workbook5Sheet(name, _tmp, _tmp$2, _tmp$3, false, true, false, _tmp$4, _M0MPB3Map3MapGsRP49poipoiiii9moonsheet3lib5types5RangeE(new _M0TPB9ArrayViewGUsRP49poipoiiii9moonsheet3lib5types5RangeEE(_bind$4, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3newN6constrS3824));
 }
 function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3new() {
   const _bind = [];
-  return new _M0TP49poipoiiii9moonsheet3lib8workbook8Workbook(_M0MPB3Map3MapGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(new _M0TPB9ArrayViewGUsRP49poipoiiii9moonsheet3lib8workbook5SheetEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3newN6constrS3828), []);
+  return new _M0TP49poipoiiii9moonsheet3lib8workbook8Workbook(_M0MPB3Map3MapGsRP49poipoiiii9moonsheet3lib8workbook5SheetE(new _M0TPB9ArrayViewGUsRP49poipoiiii9moonsheet3lib8workbook5SheetEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3newN6constrS3830), []);
 }
 function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook10add__sheet(self, name) {
   const sheet = _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet3new(name);
@@ -12427,7 +12442,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circular(self) {
         } else {
           const _Some$3 = _bind$3;
           const _text = _Some$3;
-          _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells, _key, new _M0TP49poipoiiii9moonsheet3lib8workbook4Cell(_text, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circularN6constrS3955, _cell.format));
+          _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells, _key, new _M0TP49poipoiiii9moonsheet3lib8workbook4Cell(_text, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circularN6constrS3957, _cell.format));
           count = count + 1 | 0;
         }
       }
@@ -12436,6 +12451,113 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet14mark__circular(self) {
   }
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11mark__stale(self);
   return count;
+}
+function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11mark__dirty(self, key) {
+  if (!self.graph_valid) {
+    self.full_recalc = true;
+    return undefined;
+  }
+  const stack = [key];
+  let index = 0;
+  while (true) {
+    if (index < stack.length) {
+      const current = _M0MPC15array5Array2atGiE(stack, index);
+      index = index + 1 | 0;
+      const _bind = _M0MPB3Map3getGibE(self.dirty, current);
+      if (_bind === -1) {
+        _M0MPB3Map3setGibE(self.dirty, current, true);
+        const _bind$2 = _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph14dependents__of(self.graph, current);
+        const _bind$3 = _bind$2.length;
+        let _tmp = 0;
+        while (true) {
+          const _ = _tmp;
+          if (_ < _bind$3) {
+            const dependent = _bind$2[_];
+            _M0MPC15array5Array4pushGiE(stack, dependent);
+            _tmp = _ + 1 | 0;
+            continue;
+          } else {
+            break;
+          }
+        }
+      }
+      continue;
+    } else {
+      return;
+    }
+  }
+}
+function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet23mark__cross__dependents(self, sheet_name, changed) {
+  const target = _M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(sheet_name);
+  let marked = 0;
+  const _it = _M0MPB3Map4keysGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells);
+  while (true) {
+    const _bind = _M0MPB4Iter4nextGiE(_it);
+    if (_bind === undefined) {
+      break;
+    } else {
+      const _Some = _bind;
+      const _key = _Some;
+      const _bind$2 = _M0MPB3Map3getGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells, _key);
+      if (_bind$2 === undefined) {
+      } else {
+        const _Some$2 = _bind$2;
+        const _cell = _Some$2;
+        const _bind$3 = _cell.formula;
+        if (_bind$3 === undefined) {
+        } else {
+          const _Some$3 = _bind$3;
+          const _text = _Some$3;
+          const _bind$4 = _M0FP49poipoiiii9moonsheet3lib7formula14parse__formula(_text);
+          if (_bind$4.$tag === 1) {
+            const _Ok = _bind$4;
+            const _expr = _Ok._0;
+            let hit = false;
+            const _bind$5 = _M0FP49poipoiiii9moonsheet3lib7formula18references__across(_expr, (_name) => undefined);
+            const _bind$6 = _bind$5.length;
+            let _tmp = 0;
+            while (true) {
+              const _ = _tmp;
+              if (_ < _bind$6) {
+                const pair = _bind$5[_];
+                const _bind$7 = pair._0;
+                if (_bind$7 === undefined) {
+                } else {
+                  const _Some$4 = _bind$7;
+                  const _name = _Some$4;
+                  if (_M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(_name) === target) {
+                    let touched;
+                    if (changed === undefined) {
+                      touched = true;
+                    } else {
+                      const _Some$5 = changed;
+                      const _keys = _Some$5;
+                      const _p = pair._1;
+                      const _bind$8 = _M0MPB3Map3getGibE(_keys, (Math.imul(_p.row, 16384) | 0) + _p.col | 0);
+                      touched = !(_bind$8 === -1);
+                    }
+                    if (touched) {
+                      hit = true;
+                    }
+                  }
+                }
+                _tmp = _ + 1 | 0;
+                continue;
+              } else {
+                break;
+              }
+            }
+            if (hit) {
+              _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11mark__dirty(self, _key);
+              marked = marked + 1 | 0;
+            }
+          }
+        }
+      }
+      continue;
+    }
+  }
+  return marked;
 }
 function _M0FP49poipoiiii9moonsheet3lib8workbook13range__values(values, range) {
   const out = [];
@@ -12475,7 +12597,7 @@ function _M0FP49poipoiiii9moonsheet3lib8workbook18ref__error__values(range) {
   let i = 0;
   while (true) {
     if (i < (Math.imul(rows, cols) | 0)) {
-      _M0MPC15array5Array4pushGsE(out, _M0FP49poipoiiii9moonsheet3lib8workbook18ref__error__valuesN6constrS3980);
+      _M0MPC15array5Array4pushGsE(out, _M0FP49poipoiiii9moonsheet3lib8workbook18ref__error__valuesN6constrS4027);
       i = i + 1 | 0;
       continue;
     } else {
@@ -12506,7 +12628,7 @@ function _M0FP49poipoiiii9moonsheet3lib8workbook10eval__expr(expr, values, names
     } else {
       const _bind = _M0MPB3Map3getGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(book, _M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(sheet));
       if (_bind === undefined) {
-        return _M0FP49poipoiiii9moonsheet3lib8workbook10eval__exprN6constrS3987;
+        return _M0FP49poipoiiii9moonsheet3lib8workbook10eval__exprN6constrS4034;
       } else {
         const _Some = _bind;
         const _sheet_values = _Some;
@@ -12542,7 +12664,7 @@ function _M0FP49poipoiiii9moonsheet3lib8workbook19eval__formula__text(text, valu
     const _expr = _Ok._0;
     return _M0FP49poipoiiii9moonsheet3lib8workbook10eval__expr(_expr, values, names, book, sheet_name);
   } else {
-    return _M0FP49poipoiiii9moonsheet3lib8workbook19eval__formula__textN6constrS4014;
+    return _M0FP49poipoiiii9moonsheet3lib8workbook19eval__formula__textN6constrS4061;
   }
 }
 function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12named__range(self, name) {
@@ -12551,7 +12673,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12named__range(self, name)
 function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graph(self) {
   const graph = _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph3new();
   const _bind = [];
-  const exprs = _M0MPB3Map3MapGiRP49poipoiiii9moonsheet3lib7formula4ExprE(new _M0TPB9ArrayViewGUiRP49poipoiiii9moonsheet3lib7formula4ExprEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graphN6constrS4025);
+  const exprs = _M0MPB3Map3MapGiRP49poipoiiii9moonsheet3lib7formula4ExprE(new _M0TPB9ArrayViewGUiRP49poipoiiii9moonsheet3lib7formula4ExprEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graphN6constrS4072);
   const _it = _M0MPB3Map4keysGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells);
   while (true) {
     const _bind$2 = _M0MPB4Iter4nextGiE(_it);
@@ -12613,7 +12735,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12build__graph(self) {
 }
 function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__values(self) {
   const _bind = [];
-  const values = _M0MPB3Map3MapGiRP49poipoiiii9moonsheet3lib5types5ValueE(new _M0TPB9ArrayViewGUiRP49poipoiiii9moonsheet3lib5types5ValueEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__valuesN6constrS4055);
+  const values = _M0MPB3Map3MapGiRP49poipoiiii9moonsheet3lib5types5ValueE(new _M0TPB9ArrayViewGUiRP49poipoiiii9moonsheet3lib5types5ValueEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__valuesN6constrS4102);
   const _it = _M0MPB3Map4keysGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells);
   while (true) {
     const _bind$2 = _M0MPB4Iter4nextGiE(_it);
@@ -12686,7 +12808,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__in(se
         } else {
           const _bind$4 = _M0MPB3Map3getGiRP49poipoiiii9moonsheet3lib7formula4ExprE(exprs, _key);
           if (_bind$4 === undefined) {
-            _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib5types5ValueE(values, _key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4076);
+            _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib5types5ValueE(values, _key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4123);
           }
         }
       }
@@ -12725,8 +12847,8 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__in(se
       const _ = _tmp;
       if (_ < _bind$2) {
         const key = formula_keys[_];
-        _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib5types5ValueE(values, key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4077);
-        _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21write__formula__value(self, key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4077);
+        _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib5types5ValueE(values, key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4124);
+        _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21write__formula__value(self, key, _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN5valueS4124);
         _tmp = _ + 1 | 0;
         continue;
       } else {
@@ -12735,7 +12857,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__in(se
     }
   }
   const _bind$2 = [];
-  self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$2, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4078);
+  self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$2, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__inN6constrS4125);
   self.full_recalc = false;
   return formula_keys.length;
 }
@@ -12766,7 +12888,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__in(s
   }
   if (dirty_formulas.length === 0) {
     const _bind = [];
-    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4115);
+    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4162);
     return 0;
   }
   const _bind = _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph18topological__order(self.graph, dirty_formulas);
@@ -12801,12 +12923,12 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__in(s
       }
     }
     const _bind$3 = [];
-    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$3, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4116);
+    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$3, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4163);
     return dirty_formulas.length;
   } else {
     self.full_recalc = true;
     const _bind$2 = [];
-    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$2, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4117);
+    self.dirty = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$2, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet22recalculate__dirty__inN6constrS4164);
     return _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet21recalculate__full__in(self, book);
   }
 }
@@ -12853,10 +12975,14 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__all(self
         const _Some = _bind$6;
         const _sheet = _Some;
         const pending = _sheet.pending;
+        const will_rebuild = _sheet.full_recalc || !_sheet.graph_valid;
+        const touched = _sheet.touched;
         const changed = _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet17recalculate__with(_sheet, book);
         total = total + changed | 0;
-        _M0MPB3Map3setGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(book, _M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(name), _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__values(_sheet));
+        const after = _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet16snapshot__values(_sheet);
+        _M0MPB3Map3setGsRPB3MapGiRP49poipoiiii9moonsheet3lib5types5ValueEE(book, _M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(name), after);
         if (pending || changed > 0) {
+          const delta = will_rebuild ? undefined : touched;
           const _bind$7 = _M0MPB3Map3getGsRPB5ArrayGsEE(plan.dependents, _M0FP49poipoiiii9moonsheet3lib8workbook11upper__name(name));
           if (_bind$7.$tag === 1) {
             const _Some$2 = _bind$7;
@@ -12872,7 +12998,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__all(self
                 } else {
                   const _Some$3 = _bind$9;
                   const _target = _Some$3;
-                  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11mark__stale(_target);
+                  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet23mark__cross__dependents(_target, name, delta);
                 }
                 _tmp$3 = _$2 + 1 | 0;
                 continue;
@@ -12882,6 +13008,8 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__all(self
             }
           }
         }
+        const _bind$7 = [];
+        _sheet.touched = _M0MPB3Map3MapGibE(new _M0TPB9ArrayViewGUibEE(_bind$7, 0, 0), _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__allN6constrS4198);
       }
       _tmp$2 = _ + 1 | 0;
       continue;
@@ -12910,41 +13038,6 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__all(self
     }
   }
   return total;
-}
-function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11mark__dirty(self, key) {
-  if (!self.graph_valid) {
-    self.full_recalc = true;
-    return undefined;
-  }
-  const stack = [key];
-  let index = 0;
-  while (true) {
-    if (index < stack.length) {
-      const current = _M0MPC15array5Array2atGiE(stack, index);
-      index = index + 1 | 0;
-      const _bind = _M0MPB3Map3getGibE(self.dirty, current);
-      if (_bind === -1) {
-        _M0MPB3Map3setGibE(self.dirty, current, true);
-        const _bind$2 = _M0MP49poipoiiii9moonsheet3lib5graph15DependencyGraph14dependents__of(self.graph, current);
-        const _bind$3 = _bind$2.length;
-        let _tmp = 0;
-        while (true) {
-          const _ = _tmp;
-          if (_ < _bind$3) {
-            const dependent = _bind$2[_];
-            _M0MPC15array5Array4pushGiE(stack, dependent);
-            _tmp = _ + 1 | 0;
-            continue;
-          } else {
-            break;
-          }
-        }
-      }
-      continue;
-    } else {
-      return;
-    }
-  }
 }
 function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(self, a1, value) {
   const _bind = _M0MP49poipoiiii9moonsheet3lib5types7Address5parse(a1);
@@ -12975,6 +13068,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(self, a1, val
     }
     _M0MPB3Map3setGiRP49poipoiiii9moonsheet3lib8workbook4CellE(self.cells, key, new _M0TP49poipoiiii9moonsheet3lib8workbook4Cell(undefined, value, existing_format));
     self.pending = true;
+    _M0MPB3Map3setGibE(self.touched, key, true);
     if (had_formula) {
       self.graph_valid = false;
       self.full_recalc = true;
@@ -13005,6 +13099,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(self, a1, f
     self.graph_valid = false;
     self.full_recalc = true;
     self.pending = true;
+    _M0MPB3Map3setGibE(self.touched, key, true);
     return true;
   }
 }
@@ -13021,7 +13116,7 @@ function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet9value__at(self, addr) {
 function _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10get__value(self, a1) {
   const _bind = _M0MP49poipoiiii9moonsheet3lib5types7Address5parse(a1);
   if (_bind === undefined) {
-    return _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10get__valueN6constrS4236;
+    return _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10get__valueN6constrS4277;
   } else {
     const _Some = _bind;
     const _addr = _Some;
@@ -13163,7 +13258,7 @@ function _M0FP49poipoiiii9moonsheet3lib2io13upper__string(s) {
 }
 function _M0FP49poipoiiii9moonsheet3lib2io10parse__csv(text) {
   const rows = [];
-  const _it = _M0MPC16string6String5split(text, _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4306);
+  const _it = _M0MPC16string6String5split(text, _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4347);
   while (true) {
     const _bind = _M0MPB4Iter4nextGRPC16string10StringViewE(_it);
     if (_bind === undefined) {
@@ -13174,7 +13269,7 @@ function _M0FP49poipoiiii9moonsheet3lib2io10parse__csv(text) {
       const trimmed = _M0MPC16string10StringView9to__owned(_M0MPC16string10StringView4trim(_line, undefined));
       if (trimmed.length > 0) {
         const columns = [];
-        const _it$2 = _M0MPC16string6String5split(trimmed, _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4307);
+        const _it$2 = _M0MPC16string6String5split(trimmed, _M0FP49poipoiiii9moonsheet3lib2io10parse__csvN6recordS4348);
         while (true) {
           const _bind$2 = _M0MPB4Iter4nextGRPC16string10StringViewE(_it$2);
           if (_bind$2 === undefined) {
@@ -13199,10 +13294,10 @@ function _M0FP49poipoiiii9moonsheet3lib2io12parse__value(text) {
   }
   const upper = _M0FP49poipoiiii9moonsheet3lib2io13upper__string(text);
   if (upper === "TRUE") {
-    return _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4322;
+    return _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4363;
   }
   if (upper === "FALSE") {
-    return _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4323;
+    return _M0FP49poipoiiii9moonsheet3lib2io12parse__valueN6constrS4364;
   }
   let _try_err;
   _L: {
@@ -13242,7 +13337,7 @@ function _M0FP49poipoiiii9moonsheet3lib2io9load__csv(sheet, text) {
           const address = _M0MP49poipoiiii9moonsheet3lib5types7Address3new(row_index, column_index);
           const a1 = _M0MP49poipoiiii9moonsheet3lib5types7Address6to__a1(address);
           const trimmed = _M0MPC16string10StringView9to__owned(_M0MPC16string6String4trim(cell, undefined));
-          if (trimmed.length > 0 && _M0IPC16option6OptionPB2Eq5equalGcE(_M0MPC16string6String9get__char(trimmed, 0), _M0FP49poipoiiii9moonsheet3lib2io9load__csvN6constrS4329)) {
+          if (trimmed.length > 0 && _M0IPC16option6OptionPB2Eq5equalGcE(_M0MPC16string6String9get__char(trimmed, 0), _M0FP49poipoiiii9moonsheet3lib2io9load__csvN6constrS4370)) {
             _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, a1, trimmed);
           } else {
             _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, a1, _M0FP49poipoiiii9moonsheet3lib2io12parse__value(trimmed));
@@ -13369,62 +13464,77 @@ function _M0FP49poipoiiii9moonsheet3lib2io17export__csv__auto(sheet) {
 function _M0FP39poipoiiii9moonsheet3web22make__sample__workbook() {
   const workbook = _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook3new();
   const sheet = _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook10add__sheet(workbook, "Budget");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4380);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4381);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4382);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "D1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4383);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4384);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4385);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4386);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4387);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4421);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4422);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4423);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "D1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4424);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4425);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4426);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4427);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4428);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D2", "=B2*C2");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4388);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4389);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4390);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4391);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4429);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4430);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4431);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4432);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D3", "=B3*C3");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4392);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4393);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4394);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4395);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4433);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4434);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "B4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4435);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "C4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4436);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D4", "=B4*C4");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4396);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4397);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4398);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4399);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4400);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4401);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4402);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "E4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4437);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4438);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4439);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "C4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4440);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4441);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4442);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4443);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12define__name(sheet, "Sales", "D2:D4");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4403);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4444);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D6", "=SUM(Sales)");
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "E6", "=IF(D8>1000,\"over\",\"ok\")");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4404);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4445);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D7", "=D6*0.08");
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "E7", "=COUNTIF(C2:C4,\">1\")");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A8", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4405);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, "A8", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4446);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "D8", "=D6+D7");
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, "E8", "=ROUND(D8,2)");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4406);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4407);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D8", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4408);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4447);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4448);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(sheet, "D8", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4449);
   const summary = _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook10add__sheet(workbook, "Summary");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4409);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "B1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4410);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4411);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4450);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "B1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4451);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4452);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(summary, "B2", "=COUNT(Budget!D2:D4)");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4412);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4453);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(summary, "B3", "=Budget!D6");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4413);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4454);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(summary, "B4", "=Budget!D7");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A5", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4414);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A5", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4455);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(summary, "B5", "=Budget!D8");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4415);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4416);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B5", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4417);
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4418);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4456);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4457);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B5", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4458);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(summary, "A7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4459);
   _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(summary, "B7", "=IFERROR(Budget!D7/Budget!D8,0)");
-  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4419);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(summary, "B7", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4460);
+  const scenarios = _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook10add__sheet(workbook, "Scenarios");
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "A1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4461);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "B1", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4462);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "A2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4463);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(scenarios, "B2", "=Budget!D6");
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(scenarios, "B2", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4464);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "A3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4465);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(scenarios, "B3", "=Budget!D7/Budget!D6");
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(scenarios, "B3", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4466);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "A4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4467);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(scenarios, "B4", "=Budget!D8*2");
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(scenarios, "B4", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4468);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(scenarios, "A6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4469);
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(scenarios, "B6", "=Budget!D6+Summary!B5");
+  _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet11set__format(scenarios, "B6", _M0FP39poipoiiii9moonsheet3web22make__sample__workbookN6constrS4470);
   _M0MP49poipoiiii9moonsheet3lib8workbook8Workbook16recalculate__all(workbook);
   return workbook;
 }
@@ -13484,7 +13594,7 @@ function _M0MP39poipoiiii9moonsheet3web3App6render(self) {
   const selected = _M0MP49poipoiiii9moonsheet3lib5types7Address6to__a1(_M0MP49poipoiiii9moonsheet3lib5types7Address3new(self.selected_row, self.selected_col));
   const dependencies = _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12dependencies(sheet, selected);
   const _bind = [];
-  const dep_map = _M0MPB3Map3MapGsbE(new _M0TPB9ArrayViewGUsbEE(_bind, 0, 0), _M0MP39poipoiiii9moonsheet3web3App6renderN6constrS4432);
+  const dep_map = _M0MPB3Map3MapGsbE(new _M0TPB9ArrayViewGUsbEE(_bind, 0, 0), _M0MP39poipoiiii9moonsheet3web3App6renderN6constrS4484);
   const _bind$2 = dependencies.length;
   let _tmp = 0;
   while (true) {
@@ -13653,7 +13763,7 @@ function _M0MP39poipoiiii9moonsheet3web3App6commit(self, text) {
   if (trimmed.length === 0) {
     _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, a1, _M0DTP49poipoiiii9moonsheet3lib5types5Value5Blank__);
   } else {
-    if (_M0IPC16option6OptionPB2Eq5equalGcE(_M0MPC16string6String9get__char(trimmed, 0), _M0MP39poipoiiii9moonsheet3web3App6commitN6constrS4487)) {
+    if (_M0IPC16option6OptionPB2Eq5equalGcE(_M0MPC16string6String9get__char(trimmed, 0), _M0MP39poipoiiii9moonsheet3web3App6commitN6constrS4539)) {
       _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet12set__formula(sheet, a1, trimmed);
     } else {
       _M0MP49poipoiiii9moonsheet3lib8workbook5Sheet10set__value(sheet, a1, _M0FP49poipoiiii9moonsheet3lib2io18parse__cell__value(trimmed));

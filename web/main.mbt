@@ -81,6 +81,23 @@ fn make_sample_workbook() -> @workbook.Workbook {
   ignore(summary.set_value("A7", @types.Value::Text("Share of tax")))
   ignore(summary.set_formula("B7", "=IFERROR(Budget!D7/Budget!D8,0)"))
   ignore(summary.set_format("B7", @types.CellFormat::Percent(1)))
+
+  let scenarios = workbook.add_sheet("Scenarios")
+  ignore(scenarios.set_value("A1", @types.Value::Text("Driver")))
+  ignore(scenarios.set_value("B1", @types.Value::Text("Value")))
+  ignore(scenarios.set_value("A2", @types.Value::Text("Subtotal")))
+  ignore(scenarios.set_formula("B2", "=Budget!D6"))
+  ignore(scenarios.set_format("B2", @types.CellFormat::Currency("¥", 2)))
+  ignore(scenarios.set_value("A3", @types.Value::Text("Effective tax rate")))
+  ignore(scenarios.set_formula("B3", "=Budget!D7/Budget!D6"))
+  ignore(scenarios.set_format("B3", @types.CellFormat::Percent(1)))
+  ignore(scenarios.set_value("A4", @types.Value::Text("Double volume")))
+  ignore(scenarios.set_formula("B4", "=Budget!D8*2"))
+  ignore(scenarios.set_format("B4", @types.CellFormat::Currency("¥", 2)))
+  ignore(scenarios.set_value("A6", @types.Value::Text("Sheet covers")))
+  ignore(scenarios.set_formula("B6", "=Budget!D6+Summary!B5"))
+  ignore(scenarios.set_format("B6", @types.CellFormat::Currency("¥", 2)))
+
   ignore(workbook.recalculate_all())
   workbook
 }
