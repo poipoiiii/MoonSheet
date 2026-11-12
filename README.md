@@ -10,7 +10,7 @@ The MoonBit ecosystem already covers file formats and columnar data. MoonSheet d
 
 | Capability | `bobzhang/mbtexcel` | `ihb2032/MoonFrame` | MoonSheet |
 |---|---|---|---|
-| XLSX read / write | ✅ | — | planned adapter over `mbtexcel` |
+| XLSX read / write | ✅ | — | ✅ via `lib/xlsx` adapter |
 | DataFrame / columnar operations | — | ✅ | — |
 | CSV in / out | — | ✅ | ✅ (interchange only) |
 | Formula parsing (A1, ranges, cross-sheet) | — | — | ✅ |
@@ -38,11 +38,11 @@ In short: **mbtexcel moves bytes, MoonFrame moves columns, MoonSheet moves depen
 - **Cross-sheet references** — `=Budget!D8`, `=SUM(Budget!D2:D4)`, case-insensitive sheet names; worksheets are recalculated in dependency order and cross-sheet cycles become `#CIRC!`.
 - **Named ranges** — sheet-scoped names such as `Sales = D2:D4`; `=SUM(Sales)` works in evaluation and dependency tracking.
 - **Number formats** — General, fixed decimals with thousands grouping, currency, and percent; formats survive edits and JSON round-trips.
-- **IO** — CSV import/export and a stable JSON workbook format.
-- **CLI** — `eval`, `calc`, `json`, `validate`, `stress`.
+- **IO** — CSV import/export, a stable JSON workbook format, and XLSX in/out through the `lib/xlsx` adapter over [`moonbitlang/mbtexcel`](https://mooncakes.io/docs/moonbitlang/mbtexcel). MoonSheet does not implement OOXML itself.
+- **CLI** — `eval`, `calc`, `json`, `validate`, `stress`, `bench`, `xlsx-in`, `xlsx-out`.
 - **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation. The sample workbook is a three-sheet model (`Budget` → `Summary` → `Scenarios`) where every sheet reads across sheet boundaries.
 
-The test suite has 69 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, and JSON.
+The test suite has 71 tests covering parsing, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, JSON, and XLSX round-trips.
 
 ## Incremental recalculation, measured
 
@@ -93,9 +93,11 @@ moon run cmd/moonsheet -- calc "10,20\n=A1+B1,30"
 moon run cmd/moonsheet -- validate '{"sheets":[]}'
 moon run cmd/moonsheet -- stress 100
 moon run cmd/moonsheet -- bench 200
+moon run cmd/moonsheet -- xlsx-in path/to/book.xlsx
+moon run cmd/moonsheet -- xlsx-out path/to/model.xlsx
 ```
 
-`calc` treats `\n` as a row break and prints the recalculated CSV. `stress` builds a synthetic sheet and exercises the engine end to end. `bench` compares full and incremental recalculation on a synthetic chain and on a two-sheet workbook.
+`calc` treats `\n` as a row break and prints the recalculated CSV. `stress` builds a synthetic sheet and exercises the engine end to end. `bench` compares full and incremental recalculation on a synthetic chain and on a two-sheet workbook. `xlsx-in` imports a workbook through `mbtexcel`, recalculates it, and reports the sheets it found; `xlsx-out` writes the built-in three-sheet model as XLSX.
 
 ## Web demo
 

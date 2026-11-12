@@ -29,4 +29,6 @@ All notable changes to this project are documented in this file.
 - CLI: `eval`, `calc`, `json`, `validate`, `stress`.
 - Browser demo: grid, formula bar, selection, dependency highlighting, CSV import/export, live recalculation.
 - Design system document and design notes.
-- 69 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cross-sheet references, cross-sheet per-cell invalidation, cycles, CSV, and JSON.
+- `lib/xlsx`: XLSX import/export adapter over `moonbitlang/mbtexcel`; MoonSheet keeps owning evaluation, not OOXML. Worksheet order and names, typed values, and formula text survive a round-trip.
+- CLI `xlsx-in <file>` recalculates an imported workbook; `xlsx-out <file>` writes the sample three-sheet model.
+- 71 tests covering types, parsing, evaluation, functions, dates, graphs, named ranges, formats, recalculation, cross-sheet references, cross-sheet per-cell invalidation, cycles, CSV, JSON, and XLSX round-trips.
