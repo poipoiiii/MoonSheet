@@ -30,7 +30,7 @@ In short: **mbtexcel moves bytes, MoonFrame moves columns, MoonSheet moves depen
 
 ## What works
   
-- **Formula language** — numbers, strings, booleans, A1 references, ranges, cross-sheet references (`Budget!D8`, `SUM(Budget!A1:B2)`), function calls, arithmetic, comparison, unary operators, and `^` power.
+- **Formula language** — numbers, strings, booleans, A1 references, ranges, cross-sheet references (`Budget!D8`, `SUM(Budget!A1:B2)`), function calls, arithmetic, comparison, text concatenation with `&`, unary operators, and `^` power.
 - **Typed values** — number, text, boolean, date serial, error, and blank; spreadsheet error codes (`#DIV/0!`, `#VALUE!`, `#REF!`, `#NAME?`, `#N/A`, `#NUM!`, `#CIRC!`).
 - **Function library** — 55+ functions across math, statistics, text, logic, lookup, date, and finance.
 - **Dependency graph** — precedents/dependents, topological order, cycle detection, and dirty-subgraph incremental recalculation.
@@ -43,7 +43,7 @@ In short: **mbtexcel moves bytes, MoonFrame moves columns, MoonSheet moves depen
 - **CLI** — `eval`, `calc`, `format`, `json`, `validate`, `stress`, `bench`, `xlsx-in`, `xlsx-out`.
 - **Web demo** — an interactive grid with worksheet tabs, formula bar, dependency highlighting, CSV import/export, and live recalculation. The sample workbook is a three-sheet model (`Budget` → `Summary` → `Scenarios`) where every sheet reads across sheet boundaries.
 
-The test suite has 76 tests covering parsing, printing round-trips, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, JSON, and XLSX round-trips.
+The test suite has 81 tests covering parsing, printing round-trips, evaluation, errors, functions, dates, dependency graphs, named ranges, number formats, incremental recalculation, cross-sheet references, cycles, CSV, JSON, and XLSX round-trips.
 
 ## Incremental recalculation, measured
 
