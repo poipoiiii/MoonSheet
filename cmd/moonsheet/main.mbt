@@ -16,6 +16,10 @@ fn usage() -> Unit {
   println(
     "  moonsheet bench [rows]         compare full vs incremental recalculation",
   )
+  println(
+    "  moonsheet xlsx-in <file>       import an XLSX file and recalculate",
+  )
+  println("  moonsheet xlsx-out <file>      write the sample model as XLSX")
   println("  moonsheet help                 show this help")
   println("")
   println("In inline CSV, use \\n for a new row: \"10,20\\n=A1+B1,30\"")
@@ -180,6 +184,82 @@ fn bench_command(args : Array[String]) -> Unit {
 }
 
 ///|
+/// Read an XLSX file through the `mbtexcel` adapter, recalculate, and report.
+fn xlsx_in_command(args : Array[String]) -> Unit {
+  if args.length() < 3 {
+    println("usage: moonsheet xlsx-in <file.xlsx>")
+    return
+  }
+  let read : Result[Bytes, Error] = Ok(@fs.read_file_to_bytes(args[2])) catch {
+    error => Err(error)
+  }
+  match read {
+    Err(error) => println("read failed: \{error}")
+    Ok(bytes) =>
+      match @xlsx.import_bytes(bytes) {
+        Err(message) => println(message)
+        Ok(workbook) => {
+          let cells = workbook.recalculate_all()
+          println(
+            "ok: \{workbook.names().length()} sheet(s), \{cells} formula cell(s) recalculated",
+          )
+          for name in workbook.names() {
+            match workbook.sheet(name) {
+              Some(sheet) =>
+                println(
+                  "  \{name}: \{sheet.entries().length()} populated cell(s)",
+                )
+              None => ()
+            }
+          }
+        }
+      }
+  }
+}
+
+///|
+/// Write the built-in three-sheet model to an XLSX file.
+fn xlsx_out_command(args : Array[String]) -> Unit {
+  if args.length() < 3 {
+    println("usage: moonsheet xlsx-out <file.xlsx>")
+    return
+  }
+  let workbook = @workbook.Workbook::new()
+  let assumptions = workbook.add_sheet("Assumptions")
+  ignore(assumptions.set_value("A1", @types.Value::Text("Driver")))
+  ignore(assumptions.set_value("B1", @types.Value::Text("Value")))
+  ignore(assumptions.set_value("A2", @types.Value::Text("Units")))
+  ignore(assumptions.set_value("B2", @types.Value::Number(120.0)))
+  ignore(assumptions.set_value("A3", @types.Value::Text("Price")))
+  ignore(assumptions.set_value("B3", @types.Value::Number(25.0)))
+  ignore(assumptions.set_value("A4", @types.Value::Text("Tax rate")))
+  ignore(assumptions.set_value("B4", @types.Value::Number(0.08)))
+  let income = workbook.add_sheet("Income")
+  ignore(income.set_formula("B2", "=Assumptions!B2*Assumptions!B3"))
+  ignore(income.set_formula("B3", "=B2*Assumptions!B4"))
+  ignore(income.set_formula("B4", "=B2-B3"))
+  let balance = workbook.add_sheet("Balance")
+  ignore(balance.set_formula("B2", "=Income!B4"))
+  ignore(balance.set_formula("B3", "=B2*0.3"))
+  ignore(workbook.recalculate_all())
+  match @xlsx.export_bytes(workbook) {
+    Err(message) => println(message)
+    Ok(bytes) => {
+      let write : Result[Unit, Error] = Ok(
+        @fs.write_bytes_to_file(args[2], bytes),
+      ) catch {
+        error => Err(error)
+      }
+      match write {
+        Err(error) => println("write failed: \{error}")
+        Ok(_) =>
+          println("ok: wrote \{args[2]} (\{workbook.names().length()} sheets)")
+      }
+    }
+  }
+}
+
+///|
 fn percent(part : Int32, whole : Int32) -> String {
   if whole <= 0 {
     return "n/a"
@@ -219,6 +299,8 @@ fn main {
     "validate" => validate_command(args)
     "stress" => stress_command(args)
     "bench" => bench_command(args)
+    "xlsx-in" => xlsx_in_command(args)
+    "xlsx-out" => xlsx_out_command(args)
     "help" => usage()
     _ => {
       println("unknown command: \{args[1]}")
